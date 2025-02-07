@@ -4,7 +4,7 @@ import MapPin from "./MapPin";
 
 const containerStyle = {
   width: "100vw",
-  height: "100vh",
+  height: "88vh",
 };
 
 const center = {
@@ -30,14 +30,17 @@ const MapComponent = () => {
   }
 
   return (
-    <div className="w-screen h-screen m-0 p-0">
+    <div className="w-screen m-0 p-0">
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={center}
-        zoom={3}
+        zoom={5}
         onLoad={onLoad}
         options={{
-          mapId: mapId, // Pass mapId through options
+          mapId: mapId,
+          fullscreenControl: false,
+          streetViewControl: false, // Disable street view control
+          mapTypeControl: false, // Disable map type (satellite view) control
         }}
       >
         {map && (
@@ -45,11 +48,9 @@ const MapComponent = () => {
             <MapPin
               map={map}
               position={{ lat: 37.7749, lng: -122.4194 }}
-            />
-            <MapPin
-              map={map}
-              position={{ lat: 34.0522, lng: -118.2437 }}
-              content={"Los Angeles Pin"}
+              mainImageUrl="https://res.cloudinary.com/dpzxu1ykr/image/upload/v1716463671/samples/upscale-face-1.jpg"
+              smallImageUrl="https://res.cloudinary.com/dkloacrmg/image/upload/v1738856080/memory-board/wazt3tcuhtttelstzxvn.png"
+              pinSymbolUrl="https://res.cloudinary.com/dkloacrmg/image/upload/v1738857436/memory-board/ycqrh4wugzru3gywq2rp.png"
             />
           </>
         )}
