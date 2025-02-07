@@ -75,7 +75,6 @@ const MapPin: React.FC<PinProps> = ({ map, position, mainImageUrl, smallImageUrl
 
     return () => {
       if (advancedMarker) {
-        console.log('Removing marker for position:', position);
         advancedMarker.map = null;
       }
     };
