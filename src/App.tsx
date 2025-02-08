@@ -4,19 +4,17 @@ import {APIProvider} from '@vis.gl/react-google-maps'
 import './App.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './routes/Home';
-import { ToolboxProvider } from './components/contexts/ToolboxContext';
+import ContextProviders from './components/contexts/ContextProviders';
 
 function App() {
   return (
-    <ToolboxProvider>
-      <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAP_ID as string} onLoad={() => console.log('Maps API has loaded.')}>
-        <Router>
-          <Routes>
-            <Route path="/" element={<Home />} />
-          </Routes>
-        </Router>
-      </APIProvider>
-    </ToolboxProvider>
+    <ContextProviders>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+        </Routes>
+      </Router>
+    </ContextProviders>
   );
 }
 

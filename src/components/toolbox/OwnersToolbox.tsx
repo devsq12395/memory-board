@@ -49,7 +49,7 @@ const OwnersToolbox: React.FC = () => {
       className="absolute border border-gray-300 p-2 w-48 bg-gray-100 cursor-move z-10"
     >
       <h3 className="text-lg font-semibold">Owner's Toolbox</h3>
-      <button className="mt-2 bg-blue-500 text-white py-1 px-3 rounded" onClick={handlePlacePinClick}>Place a New Pin</button>
+      <button className="mt-2 bg-blue-500 text-white py-1 px-3 rounded cursor-pointer hover:bg-blue-600" onClick={handlePlacePinClick}>Place a New Pin</button>
     </div>
   );
 };
