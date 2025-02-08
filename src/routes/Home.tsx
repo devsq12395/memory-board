@@ -7,6 +7,7 @@ import Drawer from '../components/drawer/Drawer';
 import DrawerButton from '../components/drawer/DrawerButton';
 import LoginPopup from '../components/auth/LoginPopup';
 
+
 const Home = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);

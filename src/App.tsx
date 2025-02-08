@@ -1,20 +1,26 @@
-import React from 'react'
-import {createRoot} from "react-dom/client"
-import {APIProvider} from '@vis.gl/react-google-maps'
-import './App.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './routes/Home';
+
 import ContextProviders from './components/contexts/ContextProviders';
+import GlobalScript from './components/common/GlobalScript';
+
+import Home from './routes/Home';
+import UserSignupDetailsPage from './routes/UserSignupDetailsPage';
+
+import './App.css'
 
 function App() {
+
   return (
-    <ContextProviders>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Home />} />
-        </Routes>
-      </Router>
-    </ContextProviders>
+    <Router>
+      <ContextProviders>
+        <GlobalScript>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/signup-details" element={<UserSignupDetailsPage />} />
+          </Routes>
+        </GlobalScript>
+      </ContextProviders>
+    </Router>
   );
 }
 

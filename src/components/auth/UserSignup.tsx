@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { signup } from '../../services/authService';
-import { useUser } from '../contexts/UserContext';
 
 interface UserSignupProps {
   disabled: boolean;
@@ -12,14 +11,11 @@ const UserSignup: React.FC<UserSignupProps> = ({ disabled }) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const { setIsAuthenticated } = useUser();
-
   const handleSignup = async (event: React.FormEvent) => {
     event.preventDefault();
     const { data, error } = await signup(email, password);
     
     if (data) {
-      setIsAuthenticated(true);
       setSuccessMessage('Signup almost done! Please check your email for to verify your account.');
     }
     if (error) {
@@ -45,7 +41,13 @@ const UserSignup: React.FC<UserSignupProps> = ({ disabled }) => {
         required
         className="p-3 border border-gray-300 rounded focus:outline-none focus:border-indigo-500"
       />
-      <button type="submit" disabled={disabled} className="p-3 rounded w-full bg-indigo-500 hover:bg-indigo-600 text-white cursor-pointer">
+      <button
+        type="submit"
+        disabled={disabled}
+        className={`p-3 rounded w-full ${
+          disabled ? 'bg-gray-300 cursor-not-allowed text-gray-700' : 'bg-indigo-500 hover:bg-indigo-600 text-white cursor-pointer'
+        }`}
+      >
         Sign Up
       </button>
       {errorMessage && <p className="text-red-500">{errorMessage}</p>}

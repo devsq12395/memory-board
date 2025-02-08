@@ -3,7 +3,11 @@ import { ToolboxProvider } from './ToolboxContext';
 import { UserProvider } from './UserContext';
 import { APIProvider } from '@vis.gl/react-google-maps';
 
-const ContextProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+interface ContextProvidersProps {
+  children: React.ReactNode;
+}
+
+const ContextProviders: React.FC<ContextProvidersProps> = ({ children }) => {
   return (
     <UserProvider>
       <ToolboxProvider>

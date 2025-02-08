@@ -1,6 +1,7 @@
 import React from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useUser } from '../contexts/UserContext';
+import supabase from '../../lib/supabase';
 
 interface DrawerProps {
   isOpen: boolean;
@@ -11,9 +12,10 @@ interface DrawerProps {
 const Drawer: React.FC<DrawerProps> = ({ isOpen, toggleDrawer, toggleLoginPopup }) => {
   const { isAuthenticated, setIsAuthenticated, setUid } = useUser();
 
-  const handleAuthButtonClick = () => {
+  const handleAuthButtonClick = async () => {
     if (isAuthenticated) {
       // Logout functionality
+      await supabase.auth.signOut();
       setIsAuthenticated(false);
       setUid(null);
     } else {
