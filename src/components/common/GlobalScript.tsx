@@ -8,7 +8,9 @@ const GlobalScript: React.FC = ({ children }) => {
   const userContext = useUser();
   const navigate = useNavigate();
 
+  {/* On page load scripts*/}
   useEffect(() => {
+    {/* Check if user is logged in. Set context data if yes. */}
     if (userContext) {
       const userIsLoggedIn = async () => {
         const { data: { user } } = await supabase.auth.getUser();

@@ -11,6 +11,7 @@ import LoginPopup from '../components/auth/LoginPopup';
 const Home = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
+  const [pinPosition, setPinPosition] = useState<{ lat: number; lng: number } | null>(null);
 
   const toggle = (component: string) => {
     switch (component) {
@@ -25,6 +26,10 @@ const Home = () => {
     }
   };
 
+  const handleMapClick = (lat: number, lng: number) => {
+    setPinPosition({ lat, lng });
+  };
+
   return (
     <div>
       {/* Drawer */}
@@ -37,11 +42,10 @@ const Home = () => {
       
       {/* Main Components */}
       <OwnersToolbox />
-      <MapComponent />
+      <MapComponent onMapClick={handleMapClick} />
+      <PlacePin pinPosition={pinPosition} />
 
       {/* Toolbox Components */}
-      <PlacePin />
-
       {/* Footer Components */}
       <Footer />
       <button onClick={() => toggle('loginPopup')}>Open Login Popup</button>

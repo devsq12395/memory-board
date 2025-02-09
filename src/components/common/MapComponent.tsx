@@ -1,6 +1,14 @@
 import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import MapPin from "./MapPin";
+import { getUserMemories } from "../../services/mapService";
+
+import { useUser } from "../contexts/UserContext";
+import { useToolbox } from "../contexts/ToolboxContext";
+
+interface MapComponentProps {
+  onMapClick: (lat: number, lng: number) => void;
+}
 
 const containerStyle = {
   width: "100vw",
@@ -14,7 +22,37 @@ const center = {
 
 const mapId = import.meta.env.VITE_GOOGLE_MAP_ID as string;
 
-const MapComponent = () => {
+const MapComponent: React.FC<MapComponentProps> = ({ onMapClick }) => {
+  const userContext = useUser();
+  const toolboxContext = useToolbox();
+
+  const [memories, setMemories] = useState<any[]>([]);
+
+  {/* Fetch memories function */}
+  const fetchMemories = async () => {
+    if (userContext.uid) {
+      try {
+        const userMemories = await getUserMemories(userContext.uid);
+        setMemories(userMemories || []);
+      } catch (error) {
+        console.error('Failed to fetch user memories:', error);
+      }
+    }
+  };
+
+  {/* Fetch user memories whenever userContext.uid changes */}
+  useEffect(() => {
+    fetchMemories();
+  }, [userContext.uid]);
+
+  {/* Fetch user memories whenever isRefreshPins is true */}
+  useEffect(() => {
+    if (toolboxContext.isRefreshPins) {
+      toolboxContext.setIsRefreshPins(false);
+      fetchMemories();
+    }
+  }, [toolboxContext.isRefreshPins]);
+
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
   });
@@ -23,6 +61,14 @@ const MapComponent = () => {
 
   const onLoad = (mapInstance: google.maps.Map) => {
     setMap(mapInstance);
+
+    mapInstance.addListener('click', (e: google.maps.MapMouseEvent) => {
+      if (e.latLng) {
+        const lat = e.latLng.lat();
+        const lng = e.latLng.lng();
+        onMapClick(lat, lng);
+      }
+    });
   };
 
   if (!isLoaded) {
@@ -31,6 +77,7 @@ const MapComponent = () => {
 
   return (
     <div className="w-screen m-0 p-0">
+      {/* Create the Google Map */}
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={center}
@@ -45,13 +92,17 @@ const MapComponent = () => {
       >
         {map && (
           <>
-            <MapPin
-              map={map}
-              position={{ lat: 37.7749, lng: -122.4194 }}
-              mainImageUrl="https://res.cloudinary.com/dpzxu1ykr/image/upload/v1716463671/samples/upscale-face-1.jpg"
-              smallImageUrl="https://res.cloudinary.com/dkloacrmg/image/upload/v1738856080/memory-board/wazt3tcuhtttelstzxvn.png"
-              pinSymbolUrl="https://res.cloudinary.com/dkloacrmg/image/upload/v1738857436/memory-board/ycqrh4wugzru3gywq2rp.png"
-            />
+            {/* Add map pins */}
+            {memories.map((memory, index) => (
+              <MapPin
+                key={index}
+                map={map}
+                position={{ lat: memory.pos_lat, lng: memory.pos_lng }}
+                mainImageUrl={memory.thumbnail_url}
+                smallImageUrl={memory.bottom_img_url}
+                pinSymbolUrl="https://res.cloudinary.com/dkloacrmg/image/upload/v1738857436/memory-board/ycqrh4wugzru3gywq2rp.png"
+              />
+            ))}
           </>
         )}
       </GoogleMap>
