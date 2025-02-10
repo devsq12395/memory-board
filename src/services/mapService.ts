@@ -33,8 +33,57 @@ export async function addUserMemory(user_id: string, pos_lat: number, pos_lng: n
     }
 
     return data;
-} catch (error) {
+  } catch (error) {
     console.error('Unexpected error adding user memory:', error);
+    throw error;
+  }
+}
+
+export async function updateMemoryDetails(
+  memory_id: string, 
+  title: string, 
+  date: string, 
+  description: string, 
+  thumbnail_url: string, 
+  bottom_img_url: string
+) {
+  try {
+    const { data, error } = await supabase
+      .from('memory')
+      .update({
+        title,
+        date,
+        desc: description,
+        thumbnail_url,  
+        bottom_img_url  
+      })
+      .eq('id', memory_id);
+
+    if (error) {
+      console.error('Error updating memory details:', error);
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Unexpected error updating memory details:', error);
+    throw error;
+  }
+}
+
+export async function deleteMemory(memory_id: string) {
+  try {
+    const { error } = await supabase
+      .from('memory')
+      .delete()
+      .eq('id', memory_id);
+
+    if (error) {
+      console.error('Error deleting memory:', error);
+      throw error;
+    }
+  } catch (error) {
+    console.error('Unexpected error deleting memory:', error);
     throw error;
   }
 }
