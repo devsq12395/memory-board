@@ -3,13 +3,12 @@ import { updateMemoryDetails, deleteMemory } from '../../services/mapService';
 import { useToolbox } from '../contexts/ToolboxContext';
 import Button from '../common/Button';
 
-const MAGNETS = [
-  { name: 'Magnet 1', imageUrl: 'https://example.com/magnet1.png' },
-  { name: 'Magnet 2', imageUrl: 'https://example.com/magnet2.png' },
-  { name: 'Magnet 3', imageUrl: 'https://example.com/magnet3.png' },
-];
+interface PlacePinDetailsPopupProps {
+  stickerData: { name: string; imageUrl: string };
+  setIsChooseStickerPopupOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
-const PlacePinDetailsPopup: React.FC = () => {
+const PlacePinDetailsPopup: React.FC<PlacePinDetailsPopupProps> = ({ stickerData, setIsChooseStickerPopupOpen }) => {
   const toolboxContext = useToolbox();
 
   const [thumbnailImg, setThumbnailImg] = useState<string>('');
@@ -17,9 +16,8 @@ const PlacePinDetailsPopup: React.FC = () => {
     title: '',
     date: '',
     description: '',
-    magnet: '',
-    magnetName: '',
-    magnetImageUrl: ''
+    sticker: '',
+    stickerName: ''
   });
   const [uploading, setUploading] = useState(false);
   const [uploadMessage, setUploadMessage] = useState('');
@@ -28,7 +26,7 @@ const PlacePinDetailsPopup: React.FC = () => {
     event.preventDefault();
 
     try {
-      const { title, date, description, magnetImageUrl } = formData;
+      const { title, date, description } = formData;
 
       const result = await updateMemoryDetails(
         toolboxContext.addingNewMemoryId || '',
@@ -36,7 +34,7 @@ const PlacePinDetailsPopup: React.FC = () => {
         date,
         description,
         thumbnailImg,
-        magnetImageUrl
+        stickerData.imageUrl
       );
       console.log('Memory updated:', result);
       toolboxContext.setAddingNewMemoryId(null);
@@ -136,24 +134,11 @@ const PlacePinDetailsPopup: React.FC = () => {
               <p className="text-center text-sm text-gray-500 mt-2">{uploadMessage}</p>
             </div>
 
-            {/* Magnet Image Form Group */}
+            {/* Sticker Image Form Group */}
             <div className="form-group">
-              <label htmlFor="magnet" className="block text-sm font-medium text-gray-700">Magnet Image</label>
-              <select id="magnet" name="magnet" value={formData.magnetName} onChange={(e) => {
-                const selectedMagnet = MAGNETS.find(magnet => magnet.name === e.target.value);
-                if (selectedMagnet) {
-                  setFormData(prevState => ({
-                    ...prevState,
-                    magnetName: selectedMagnet.name,
-                    magnetImageUrl: selectedMagnet.imageUrl
-                  }));
-                }
-              }}>
-                {MAGNETS.map(magnet => (
-                  <option key={magnet.name} value={magnet.name}>{magnet.name}</option>
-                ))}
-              </select>
-              <img src={formData.magnetImageUrl} alt="Magnet Preview" className="mt-2 h-20 w-20 object-cover mx-auto border border-gray-300 rounded-md" />
+              <label htmlFor="sticker" className="block text-sm font-medium text-gray-700">Sticker Image</label>
+              <Button type="button" text="Choose Sticker" styleType="file" onClick={() => setIsChooseStickerPopupOpen(true)} />
+              <img src={stickerData.imageUrl} alt="Sticker Preview" className="mt-2 h-20 w-20 object-cover mx-auto border border-gray-300 rounded-md" />
             </div>
           </div>
           <div className="flex justify-end space-x-2 col-span-2 mt-4">

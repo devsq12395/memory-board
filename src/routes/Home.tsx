@@ -10,6 +10,7 @@ import DrawerButton from '../components/drawer/DrawerButton';
 
 import LoginPopup from '../components/auth/LoginPopup';
 import PlacePinDetailsPopup from '../components/toolbox/PlacePinDetailsPopup';
+import ChooseStickerPopup from '../components/toolbox/ChooseStickerPopup';
 
 import { useToolbox } from '../components/contexts/ToolboxContext';
 
@@ -18,20 +19,11 @@ const Home = () => {
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
+  const [isChooseStickerPopupOpen, setIsChooseStickerPopupOpen] = useState(false);
+  const [chosenSticker, setChosenSticker] = useState<{ name: string; imageUrl: string }>(
+    { name: 'Sticker 1', imageUrl: 'https://res.cloudinary.com/dkloacrmg/image/upload/v1717925908/cld-sample-3.jpg' }
+  );
   const [pinPosition, setPinPosition] = useState<{ lat: number; lng: number } | null>(null);
-
-  const toggle = (component: string) => {
-    switch (component) {
-      case 'drawer':
-        setIsDrawerOpen(!isDrawerOpen);
-        break;
-      case 'loginPopup':
-        setIsLoginPopupOpen(!isLoginPopupOpen);
-        break;
-      default:
-        break;
-    }
-  };
 
   const handleMapClick = (lat: number, lng: number) => {
     setPinPosition({ lat, lng });
@@ -40,11 +32,11 @@ const Home = () => {
   return (
     <div>
       {/* Drawer */}
-      <DrawerButton toggleDrawer={() => toggle('drawer')} />
+      <DrawerButton toggleDrawer={() => setIsDrawerOpen(!isDrawerOpen)} />
       <Drawer 
         isOpen={isDrawerOpen} 
-        toggleDrawer={() => toggle('drawer')} 
-        toggleLoginPopup={() => toggle('loginPopup')} 
+        toggleDrawer={() => setIsDrawerOpen(!isDrawerOpen)} 
+        toggleLoginPopup={() => setIsLoginPopupOpen(!isLoginPopupOpen)} 
       />
       
       {/* Main Components */}
@@ -53,14 +45,25 @@ const Home = () => {
       <PlacePin pinPosition={pinPosition} />
 
       {/* Toolbox Components */}
-      <button onClick={() => toggle('loginPopup')}>Open Login Popup</button>
+      <button onClick={() => setIsLoginPopupOpen(!isLoginPopupOpen)}>Open Login Popup</button>
 
       {/* Footer Components */}
       <Footer />
 
       {/* Popups */}
-      {toolboxContext.addingNewMemoryId && <PlacePinDetailsPopup />}
-      {isLoginPopupOpen && <LoginPopup onClose={() => toggle('loginPopup')} />}
+      {toolboxContext.addingNewMemoryId && chosenSticker && 
+        <PlacePinDetailsPopup 
+          stickerData={chosenSticker}
+          setIsChooseStickerPopupOpen={setIsChooseStickerPopupOpen}
+        />
+      }
+      {isChooseStickerPopupOpen && 
+        <ChooseStickerPopup 
+          setStickerData={setChosenSticker} 
+          onClose={() => setIsChooseStickerPopupOpen(!isChooseStickerPopupOpen)} 
+        />
+      }
+      {isLoginPopupOpen && <LoginPopup onClose={() => setIsLoginPopupOpen(!isLoginPopupOpen)} />}
     </div>
   );
 };

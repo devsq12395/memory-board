@@ -6,7 +6,7 @@ interface ButtonProps {
   onClick?: () => void;
   disabled?: boolean;
   className?: string;
-  styleType?: 'primary' | 'secondary' | 'file';
+  styleType?: 'primary' | 'secondary' | 'file' | 'drawer-content';
 }
 
 const Button: React.FC<ButtonProps> = ({ type, text, onClick, disabled, className, styleType = 'primary' }) => {
@@ -20,6 +20,9 @@ const Button: React.FC<ButtonProps> = ({ type, text, onClick, disabled, classNam
       break;
     case 'file':
       styleClasses = 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100';
+      break;
+    case 'drawer-content':
+      styleClasses = 'bg-blue-100 text-blue-700 hover:bg-blue-200 border-b border-gray-300';
       break;
     default:
       styleClasses = 'bg-indigo-600 hover:bg-indigo-700 text-white';

@@ -2,6 +2,7 @@ import React from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useUser } from '../contexts/UserContext';
 import supabase from '../../lib/supabase';
+import Button from '../common/Button';
 
 interface DrawerProps {
   isOpen: boolean;
@@ -12,16 +13,30 @@ interface DrawerProps {
 const Drawer: React.FC<DrawerProps> = ({ isOpen, toggleDrawer, toggleLoginPopup }) => {
   const { isAuthenticated, setIsAuthenticated, setUid } = useUser();
 
-  const handleAuthButtonClick = async () => {
-    if (isAuthenticated) {
-      // Logout functionality
-      await supabase.auth.signOut();
-      setIsAuthenticated(false);
-      setUid(null);
-    } else {
-      toggleLoginPopup();
+  const handleButtonClick = async (btn: string) => {
+    switch (btn) {
+      case 'Login':
+        toggleLoginPopup();
+        break;
+      case 'Logout':
+        await supabase.auth.signOut();
+        setIsAuthenticated(false);
+        setUid(null);
+        break;
+      default:
+        break;
     }
   };
+
+  const renderButton = (text: string, action: string) => (
+    <Button
+      type="button"
+      text={text}
+      onClick={async () => await handleButtonClick(action)}
+      className="w-full"
+      styleType="drawer-content"
+    />
+  );
 
   return (
     <div className={`fixed top-0 right-0 w-64 h-full bg-white shadow-lg z-50 transition-transform duration-300 ${isOpen ? 'transform-none' : 'translate-x-full'}`}>
@@ -32,12 +47,17 @@ const Drawer: React.FC<DrawerProps> = ({ isOpen, toggleDrawer, toggleLoginPopup 
       <hr className="mt-10 border-gray-300" />
 
       {/* Contents */}
-      <div
-        className="px-4 py-2 mt-2 bg-blue-100 text-blue-700 hover:bg-blue-200 cursor-pointer border-b border-gray-300"
-        onClick={handleAuthButtonClick}
-      >
-        {isAuthenticated ? 'Logout' : 'Login / Signup'}
-      </div>
+      {isAuthenticated ? (
+        <div>
+          {/* Buttons when logged in */}
+          {renderButton('Logout', 'Logout')}
+        </div>
+      ) : (
+        <div>
+          {/* Buttons when not logged in */}
+          {renderButton('Login / Signup', 'Login')}
+        </div>
+      )}
     </div>
   );
 };
