@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { getMemoryData } from '../../services/mapService';
 
+import MemoryDetailsPopupPhotos from './MemoryDetailsPopupPhotos';
+
 interface MemoryDetailsPopupProps {
   memoryId: string;
   onClose: () => void;
@@ -51,7 +53,11 @@ const MemoryDetailsPopup: React.FC<MemoryDetailsPopupProps> = ({ memoryId, onClo
             <p className="text-sm text-gray-500">Date: {new Date(memoryData.date).toLocaleDateString()}</p>
             <p className="text-sm mb-4 mt-6">{memoryData.desc}</p>
             <hr className="my-4" />
+            
+            {/* Photos */}
             <h3 className="text-lg font-bold">Photos</h3>
+            <MemoryDetailsPopupPhotos memoryId={memoryId} />
+            <hr className="my-4" />
           </div>
         </div>
       </div>

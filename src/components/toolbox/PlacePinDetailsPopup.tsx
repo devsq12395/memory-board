@@ -15,7 +15,7 @@ const PlacePinDetailsPopup: React.FC<PlacePinDetailsPopupProps> = ({ stickerData
   const [thumbnailImg, setThumbnailImg] = useState<string>('');
   const [formData, setFormData] = useState({
     title: '',
-    date: '',
+    date: new Date('2025-01-01').toISOString().split('T')[0],
     description: '',
     sticker: '',
     stickerName: ''
@@ -106,7 +106,7 @@ const PlacePinDetailsPopup: React.FC<PlacePinDetailsPopupProps> = ({ stickerData
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="p-4 bg-white shadow-md rounded-md">
+      <div className="p-4 bg-white shadow-md rounded-md w-1/2 h-[60%] min-w-[500px] min-h-[500px]">
         <h2 className="text-lg font-bold mb-4 text-center">Let's add details to this memory</h2>
         <hr className="my-4 border-gray-300" />
 
@@ -124,17 +124,17 @@ const PlacePinDetailsPopup: React.FC<PlacePinDetailsPopupProps> = ({ stickerData
             </div>
             <div className="form-group">
               <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
-              <textarea id="description" name="description" rows={3} placeholder="Enter description" value={formData.description} onChange={handleInputChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
+              <textarea id="description" name="description" rows={3} placeholder="Enter description" value={formData.description} onChange={handleInputChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm resize-none"></textarea>
             </div>
           </div>
 
-          <div className="col-span-2 md:col-span-1 border-l border-gray-300 pl-4">
+          <div className="col-span-2 md:col-span-1 border-l border-gray-300 pl-4 pb-22">
             {/* Thumbnail Image Form Group */}
             <div className="form-group">
             <label htmlFor="sticker" className="block text-sm font-medium text-gray-700">Thumbnail Image</label>
               <Button type="button" text="Choose File" styleType="file" onClick={() => document.getElementById('thumbnail')?.click()} />
               <input type="file" id="thumbnail" name="thumbnail" accept="image/*" onChange={handleInputChange} className="hidden" />
-              <img src={thumbnailImg || 'https://res.cloudinary.com/dkloacrmg/image/upload/v1717925908/cld-sample-3.jpg'} alt="Thumbnail Preview" className="mt-2 h-20 w-20 object-cover mx-auto border border-gray-300 rounded-md" />
+              <img src={thumbnailImg || 'https://res.cloudinary.com/dkloacrmg/image/upload/v1717925908/cld-sample-3.jpg'} alt="Thumbnail Preview" className="mt-2 h-35 w-35 object-cover mx-auto border border-gray-300 rounded-md" />
               <p className="text-center text-sm text-gray-500 mt-2">{uploadMessage}</p>
             </div>
 
@@ -142,10 +142,10 @@ const PlacePinDetailsPopup: React.FC<PlacePinDetailsPopupProps> = ({ stickerData
             <div className="form-group">
               <label htmlFor="sticker" className="block text-sm font-medium text-gray-700">Sticker Image</label>
               <Button type="button" text="Choose Sticker" styleType="file" onClick={() => setIsChooseStickerPopupOpen(true)} />
-              <img src={stickerData.imageUrl} alt="Sticker Preview" className="mt-2 h-20 w-20 object-cover mx-auto border border-gray-300 rounded-md" />
+              <img src={stickerData.imageUrl} alt="Sticker Preview" className="mt-2 h-35 w-35 object-cover mx-auto border border-gray-300 rounded-md" />
             </div>
           </div>
-          <div className="flex justify-end space-x-2 col-span-2 mt-4">
+          <div className="flex justify-end space-x-2 col-span-2 mt-2">
             <Button type="submit" text="Submit" styleType="primary" disabled={uploading} />
             <Button type="button" text="Cancel" styleType="secondary" disabled={uploading} onClick={handleCancel} />
           </div>
