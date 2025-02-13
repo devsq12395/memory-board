@@ -4,7 +4,7 @@ export async function getUserMemories(user_id: string) {
   try {
     const { data, error } = await supabase
       .from('memory')
-      .select('title, thumbnail_url, bottom_img_url, pos_lat, pos_lng')
+      .select('id, title, thumbnail_url, bottom_img_url, pos_lat, pos_lng')
       .eq('user_id', user_id);
 
     if (error) {
@@ -87,3 +87,22 @@ export async function deleteMemory(memory_id: string) {
     throw error;
   }
 }
+
+export const getMemoryData = async (memoryId: string) => {
+  try {
+    const { data, error } = await supabase
+      .from('memory')
+      .select('title, thumbnail_url, bottom_img_url, desc, date')
+      .eq('id', memoryId)
+      .single();
+
+    if (error) {
+      throw new Error(`Error fetching memory data: ${error.message}`);
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Failed to fetch memory data:', error);
+    throw error;
+  }
+};

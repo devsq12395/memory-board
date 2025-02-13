@@ -6,9 +6,12 @@ interface PinProps {
   mainImageUrl: string;
   smallImageUrl: string;
   pinSymbolUrl: string;
+  memoryId: string;
+  setSelectedMemoryId: React.Dispatch<React.SetStateAction<string | null>>;
+  setIsMemoryDetailsPopupOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const MapPin: React.FC<PinProps> = ({ map, position, mainImageUrl, smallImageUrl, pinSymbolUrl }) => {
+const MapPin: React.FC<PinProps> = ({ map, position, mainImageUrl, smallImageUrl, pinSymbolUrl, memoryId, setSelectedMemoryId, setIsMemoryDetailsPopupOpen }) => {
   const [zoomLevel, setZoomLevel] = useState<number>(map?.getZoom() || 10);
 
   useEffect(() => {
@@ -35,8 +38,8 @@ const MapPin: React.FC<PinProps> = ({ map, position, mainImageUrl, smallImageUrl
 
     const createPinContent = (mainImageUrl: string, smallImageUrl: string, pinSymbolUrl: string) => {
       const div = document.createElement('div');
-      div.className = `relative ${zoomLevel > 12 ? 'w-16 h-16' : 'w-12 h-12'} mt-10`;
-
+      div.className = `relative ${zoomLevel > 12 ? 'w-16 h-16' : 'w-12 h-12'} mt-10 cursor-pointer`;
+      
       const mainImage = document.createElement('img');
       mainImage.src = mainImageUrl;
       mainImage.className = 'w-[75px] h-[75px]';
@@ -68,6 +71,12 @@ const MapPin: React.FC<PinProps> = ({ map, position, mainImageUrl, smallImageUrl
         position,
         map,
         content: createPinContent(mainImageUrl, smallImageUrl, pinSymbolUrl),
+      });
+
+      advancedMarker.addListener('click', () => {
+        console.log ('setting memory id to ', memoryId);
+        setSelectedMemoryId(memoryId);
+        setIsMemoryDetailsPopupOpen(true);
       });
     };
 

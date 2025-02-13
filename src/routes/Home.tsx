@@ -11,6 +11,7 @@ import DrawerButton from '../components/drawer/DrawerButton';
 import LoginPopup from '../components/auth/LoginPopup';
 import PlacePinDetailsPopup from '../components/toolbox/PlacePinDetailsPopup';
 import ChooseStickerPopup from '../components/toolbox/ChooseStickerPopup';
+import MemoryDetailsPopup from '../components/memory-details/MemoryDetailsPopup';
 
 import { useToolbox } from '../components/contexts/ToolboxContext';
 
@@ -20,6 +21,10 @@ const Home = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
   const [isChooseStickerPopupOpen, setIsChooseStickerPopupOpen] = useState(false);
+  const [isMemoryDetailsPopupOpen, setIsMemoryDetailsPopupOpen] = useState(false);
+  const [selectedMemoryId, setSelectedMemoryId] = useState<string | null>(null);
+
+  const [isTriggerDelayedRefresh, setIsTriggerDelayedRefresh] = useState(false);
   const [chosenSticker, setChosenSticker] = useState<{ name: string; imageUrl: string }>(
     { name: 'Sticker 1', imageUrl: 'https://res.cloudinary.com/dkloacrmg/image/upload/v1717925908/cld-sample-3.jpg' }
   );
@@ -28,6 +33,20 @@ const Home = () => {
   const handleMapClick = (lat: number, lng: number) => {
     setPinPosition({ lat, lng });
   };
+
+  // Delayed refresh of the pins
+  useEffect(() => {
+    if (isTriggerDelayedRefresh) {
+      const timeoutId = setTimeout(() => {
+        toolboxContext.setIsRefreshPins(true);
+        setIsTriggerDelayedRefresh(false);
+        console.log ('refreshing');
+      }, 200);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [isTriggerDelayedRefresh]);
+  
 
   return (
     <div>
@@ -41,7 +60,11 @@ const Home = () => {
       
       {/* Main Components */}
       <OwnersToolbox />
-      <MapComponent onMapClick={handleMapClick} />
+      <MapComponent 
+        onMapClick={handleMapClick} 
+        setSelectedMemoryId={setSelectedMemoryId}
+        setIsMemoryDetailsPopupOpen={setIsMemoryDetailsPopupOpen}
+      />
       <PlacePin pinPosition={pinPosition} />
 
       {/* Toolbox Components */}
@@ -55,12 +78,19 @@ const Home = () => {
         <PlacePinDetailsPopup 
           stickerData={chosenSticker}
           setIsChooseStickerPopupOpen={setIsChooseStickerPopupOpen}
+          setIsTriggerDelayedRefresh={setIsTriggerDelayedRefresh}
         />
       }
       {isChooseStickerPopupOpen && 
         <ChooseStickerPopup 
           setStickerData={setChosenSticker} 
           onClose={() => setIsChooseStickerPopupOpen(!isChooseStickerPopupOpen)} 
+        />
+      }
+      {isMemoryDetailsPopupOpen && 
+        <MemoryDetailsPopup 
+          memoryId={selectedMemoryId || ''} 
+          onClose={() => setIsMemoryDetailsPopupOpen(false)} 
         />
       }
       {isLoginPopupOpen && <LoginPopup onClose={() => setIsLoginPopupOpen(!isLoginPopupOpen)} />}

@@ -1,5 +1,5 @@
 import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import MapPin from "./MapPin";
 import { getUserMemories } from "../../services/mapService";
 
@@ -8,6 +8,8 @@ import { useToolbox } from "../contexts/ToolboxContext";
 
 interface MapComponentProps {
   onMapClick: (lat: number, lng: number) => void;
+  setSelectedMemoryId: React.Dispatch<React.SetStateAction<string | null>>;
+  setIsMemoryDetailsPopupOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const containerStyle = {
@@ -22,21 +24,29 @@ const center = {
 
 const mapId = import.meta.env.VITE_GOOGLE_MAP_ID as string;
 
-const MapComponent: React.FC<MapComponentProps> = ({ onMapClick }) => {
+const MapComponent: React.FC<MapComponentProps> = ({ onMapClick, setSelectedMemoryId, setIsMemoryDetailsPopupOpen }) => {
   const userContext = useUser();
   const toolboxContext = useToolbox();
-
+  
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const [memories, setMemories] = useState<any[]>([]);
 
   {/* Fetch memories function */}
   const fetchMemories = async () => {
-    if (userContext.uid) {
-      try {
-        const userMemories = await getUserMemories(userContext.uid);
-        setMemories(userMemories || []);
-      } catch (error) {
-        console.error('Failed to fetch user memories:', error);
-      }
+    if (!userContext.uid) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const userMemories = await getUserMemories(userContext.uid);
+      setMemories(userMemories || []);
+    } catch (err) {
+      console.error("Failed to fetch user memories:", err);
+      setError("Failed to load memories.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -100,6 +110,9 @@ const MapComponent: React.FC<MapComponentProps> = ({ onMapClick }) => {
                 position={{ lat: memory.pos_lat, lng: memory.pos_lng }}
                 mainImageUrl={memory.thumbnail_url}
                 smallImageUrl={memory.bottom_img_url}
+                setSelectedMemoryId={setSelectedMemoryId}
+                setIsMemoryDetailsPopupOpen={setIsMemoryDetailsPopupOpen}
+                memoryId={memory.id}
                 pinSymbolUrl="https://res.cloudinary.com/dkloacrmg/image/upload/v1738857436/memory-board/ycqrh4wugzru3gywq2rp.png"
               />
             ))}

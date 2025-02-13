@@ -6,9 +6,10 @@ import Button from '../common/Button';
 interface PlacePinDetailsPopupProps {
   stickerData: { name: string; imageUrl: string };
   setIsChooseStickerPopupOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsTriggerDelayedRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const PlacePinDetailsPopup: React.FC<PlacePinDetailsPopupProps> = ({ stickerData, setIsChooseStickerPopupOpen }) => {
+const PlacePinDetailsPopup: React.FC<PlacePinDetailsPopupProps> = ({ stickerData, setIsChooseStickerPopupOpen, setIsTriggerDelayedRefresh }) => {
   const toolboxContext = useToolbox();
 
   const [thumbnailImg, setThumbnailImg] = useState<string>('');
@@ -38,6 +39,7 @@ const PlacePinDetailsPopup: React.FC<PlacePinDetailsPopupProps> = ({ stickerData
       );
       console.log('Memory updated:', result);
       toolboxContext.setAddingNewMemoryId(null);
+      setIsTriggerDelayedRefresh(true);
     } catch (error) {
       console.error('Error updating memory:', error);
     }
@@ -91,7 +93,8 @@ const PlacePinDetailsPopup: React.FC<PlacePinDetailsPopupProps> = ({ stickerData
       await deleteMemory(toolboxContext.addingNewMemoryId);
     }
     toolboxContext.setAddingNewMemoryId(null);
-    // Put delayed refresh pin here
+    
+    setIsTriggerDelayedRefresh(true);
     console.log('Cancel button clicked');
   };
 
@@ -128,9 +131,10 @@ const PlacePinDetailsPopup: React.FC<PlacePinDetailsPopupProps> = ({ stickerData
           <div className="col-span-2 md:col-span-1 border-l border-gray-300 pl-4">
             {/* Thumbnail Image Form Group */}
             <div className="form-group">
+            <label htmlFor="sticker" className="block text-sm font-medium text-gray-700">Thumbnail Image</label>
               <Button type="button" text="Choose File" styleType="file" onClick={() => document.getElementById('thumbnail')?.click()} />
               <input type="file" id="thumbnail" name="thumbnail" accept="image/*" onChange={handleInputChange} className="hidden" />
-              <img src={thumbnailImg || 'default-thumbnail.png'} alt="Thumbnail Preview" className="mt-2 h-20 w-20 object-cover mx-auto border border-gray-300 rounded-md" />
+              <img src={thumbnailImg || 'https://res.cloudinary.com/dkloacrmg/image/upload/v1717925908/cld-sample-3.jpg'} alt="Thumbnail Preview" className="mt-2 h-20 w-20 object-cover mx-auto border border-gray-300 rounded-md" />
               <p className="text-center text-sm text-gray-500 mt-2">{uploadMessage}</p>
             </div>
 
