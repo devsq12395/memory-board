@@ -36,9 +36,8 @@ const OwnersToolbox: React.FC = () => {
   useEffect(() => {
     const element = toolboxRef.current;
     if (element) {
-      const centerX = window.innerWidth / 2 - element.offsetWidth / 2;
-      element.style.left = `${centerX}px`;
-      element.style.top = '10px';
+      element.style.left = '10px'; // Slight margin from the left
+      element.style.top = '10px';  // Slight margin from the top
     }
   }, []);
 

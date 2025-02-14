@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useUser } from '../contexts/UserContext';
 import supabase from '../../lib/supabase';
@@ -12,9 +12,26 @@ interface DrawerProps {
 
 const Drawer: React.FC<DrawerProps> = ({ isOpen, toggleDrawer, toggleLoginPopup }) => {
   const { isAuthenticated, setIsAuthenticated, setUid } = useUser();
+  const drawerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isOpen && drawerRef.current && !drawerRef.current.contains(event.target as Node)) {
+        toggleDrawer();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [toggleDrawer, isOpen]);
 
   const handleButtonClick = async (btn: string) => {
     switch (btn) {
+      case 'Profile Settings':
+        
+        break;
       case 'Login':
         toggleLoginPopup();
         break;
@@ -39,17 +56,22 @@ const Drawer: React.FC<DrawerProps> = ({ isOpen, toggleDrawer, toggleLoginPopup 
   );
 
   return (
-    <div className={`fixed top-0 right-0 w-64 h-full bg-white shadow-lg z-50 transition-transform duration-300 ${isOpen ? 'transform-none' : 'translate-x-full'}`}>
-      {/* Close button */}
-      <button onClick={toggleDrawer} className="absolute top-2 left-2 p-1 bg-gray-200 rounded-full hover:bg-gray-300 cursor-pointer">
-        <XMarkIcon className="h-5 w-5 text-gray-800" />
-      </button>
-      <hr className="mt-10 border-gray-300" />
+    <div ref={drawerRef} className={`fixed top-0 right-0 w-64 h-full bg-white shadow-lg z-50 transition-transform duration-300 ${isOpen ? 'transform-none' : 'translate-x-full'}`}>
+      {/* User Info */}
+      <div className="flex items-center p-4">
+        <img src="/path/to/profile.jpg" alt="User Profile" className="h-10 w-10 rounded-full mr-3" />
+        <div>
+          <p className="font-medium">Sandra Adams</p>
+          <p className="text-sm text-gray-500">sandra_a88@gmail.com</p>
+        </div>
+      </div>
+      <hr className="border-gray-300" />
 
       {/* Contents */}
       {isAuthenticated ? (
         <div>
           {/* Buttons when logged in */}
+          {renderButton('Profile Settings', 'Profile Settings')}
           {renderButton('Logout', 'Logout')}
         </div>
       ) : (

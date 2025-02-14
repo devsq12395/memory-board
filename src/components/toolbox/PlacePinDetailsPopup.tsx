@@ -12,7 +12,7 @@ interface PlacePinDetailsPopupProps {
 const PlacePinDetailsPopup: React.FC<PlacePinDetailsPopupProps> = ({ stickerData, setIsChooseStickerPopupOpen, setIsTriggerDelayedRefresh }) => {
   const toolboxContext = useToolbox();
 
-  const [thumbnailImg, setThumbnailImg] = useState<string>('');
+  const [thumbnailImg, setThumbnailImg] = useState<string>('https://res.cloudinary.com/dkloacrmg/image/upload/v1739507939/memory-board/pbmgfsmpejt3wulrdruy.png');
   const [formData, setFormData] = useState({
     title: '',
     date: new Date('2025-01-01').toISOString().split('T')[0],

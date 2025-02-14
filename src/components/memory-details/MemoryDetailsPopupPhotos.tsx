@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { getPhotosOfMemory, addPhoto } from '../../services/photosService';
 import Button from '../common/Button';
 
+import { usePopups } from '../contexts/PopupsContext';
+
 interface MemoryDetailsPopupPhotosProps {
   memoryId: string;
 }
@@ -11,6 +13,8 @@ const MemoryDetailsPopupPhotos: React.FC<MemoryDetailsPopupPhotosProps> = ({ mem
   const [currentPage, setCurrentPage] = useState(0);
   const [uploadStatus, setUploadStatus] = useState<string | null>(null);
   const photosPerPage = 5;
+
+  const popupsContext = usePopups();
 
   useEffect(() => {
     const fetchPhotos = async () => {
@@ -34,6 +38,11 @@ const MemoryDetailsPopupPhotos: React.FC<MemoryDetailsPopupPhotosProps> = ({ mem
     currentPage * photosPerPage,
     (currentPage + 1) * photosPerPage
   );
+
+  const handleImageClick = (photoId: string) => {
+    popupsContext.setIsImagePopupOpen(true);
+    popupsContext.setCurImageID(photoId);
+  };
 
   const handleUpload = async () => {
     const fileInput = document.createElement('input');
@@ -84,7 +93,13 @@ const MemoryDetailsPopupPhotos: React.FC<MemoryDetailsPopupPhotosProps> = ({ mem
         <div className="flex items-start space-x-2 overflow-x-auto">
           {currentPhotos.map((photo, index) => (
             photo.image_url ? (
-              <img key={index} src={photo.image_url} alt={`Photo ${index + 1}`} className="w-40 h-40 object-cover" />
+              <img
+                key={index}
+                src={photo.image_url}
+                alt={`Photo ${index + 1}`}
+                onClick={() => handleImageClick(photo.id)}
+                className="w-40 h-40 object-cover cursor-pointer"
+              />
             ) : null
           ))}
         </div>

@@ -16,8 +16,10 @@ const PlacePin: React.FC<PlacePinProps> = ({ pinPosition }) => {
     const handleMouseMove = (e: MouseEvent) => {
       const pin = document.getElementById('pin');
       if (pin) {
-        pin.style.left = `${e.pageX}px`;
-        pin.style.top = `${e.pageY}px`;
+        const pinWidth = 50;
+        const pinHeight = 50;
+        pin.style.left = `${e.pageX - 25}px`;
+        pin.style.top = `${e.pageY - 25}px`;
       }
     };
 
@@ -69,8 +71,8 @@ const PlacePin: React.FC<PlacePinProps> = ({ pinPosition }) => {
 
   return isPlacingPin ? (
     <div>
-      <img id="pin" src="/path/to/pin.png" alt="Pin" style={{ position: 'absolute', pointerEvents: 'none' }} />
-      <div style={{ position: 'fixed', bottom: '80%', left: '50%', transform: 'translateX(-50%)', backgroundColor: 'white', padding: '10px', border: '1px solid black' }}>
+      <img id="pin" src="https://res.cloudinary.com/dkloacrmg/image/upload/v1738857436/memory-board/ycqrh4wugzru3gywq2rp.png" alt="Pin" className="w-[50px] h-[50px] absolute pointer-events-none cursor-pointer" />
+      <div className="absolute bottom-[80%] left-1/2 transform -translate-x-1/2 bg-white p-2.5 border border-black">
         Click to place a pin. Press ESC to cancel.
       </div>
     </div>

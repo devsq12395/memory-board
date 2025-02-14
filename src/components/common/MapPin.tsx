@@ -42,7 +42,10 @@ const MapPin: React.FC<PinProps> = ({ map, position, mainImageUrl, smallImageUrl
       
       const mainImage = document.createElement('img');
       mainImage.src = mainImageUrl;
-      mainImage.className = 'w-[75px] h-[75px]';
+      mainImage.style.width = '75px';
+      mainImage.style.height = '75px';
+      mainImage.style.objectFit = 'cover';
+      mainImage.className = 'object-cover';
 
       const mainImageContainer = document.createElement('div');
       mainImageContainer.className = 'w-[85px] h-[95px] border-2 border-white bg-white p-1 shadow-md flex justify-center items-center';

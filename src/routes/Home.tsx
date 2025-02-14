@@ -12,11 +12,14 @@ import LoginPopup from '../components/auth/LoginPopup';
 import PlacePinDetailsPopup from '../components/toolbox/PlacePinDetailsPopup';
 import ChooseStickerPopup from '../components/toolbox/ChooseStickerPopup';
 import MemoryDetailsPopup from '../components/memory-details/MemoryDetailsPopup';
+import ImageViewer from '../components/common/ImageViewer';
 
 import { useToolbox } from '../components/contexts/ToolboxContext';
+import { usePopups } from '../components/contexts/PopupsContext';
 
 const Home = () => {
   const toolboxContext = useToolbox();
+  const popupsContext = usePopups();
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
@@ -94,6 +97,7 @@ const Home = () => {
         />
       }
       {isLoginPopupOpen && <LoginPopup onClose={() => setIsLoginPopupOpen(!isLoginPopupOpen)} />}
+      <ImageViewer />
     </div>
   );
 };
