@@ -61,6 +61,7 @@ const Home = () => {
         isOpen={isDrawerOpen} 
         toggleDrawer={() => setIsDrawerOpen(!isDrawerOpen)} 
         toggleLoginPopup={() => setIsLoginPopupOpen(!isLoginPopupOpen)} 
+        toggleUserSettingsPopup={() => setIsUserSettingsPopupOpen(!isUserSettingsPopupOpen)}
       />
       
       {/* Main Components */}

@@ -8,9 +8,10 @@ interface DrawerProps {
   isOpen: boolean;
   toggleDrawer: () => void;
   toggleLoginPopup: () => void;
+  toggleUserSettingsPopup: () => void;
 }
 
-const Drawer: React.FC<DrawerProps> = ({ isOpen, toggleDrawer, toggleLoginPopup }) => {
+const Drawer: React.FC<DrawerProps> = ({ isOpen, toggleDrawer, toggleLoginPopup, toggleUserSettingsPopup }) => {
   const { isAuthenticated, setIsAuthenticated, setUid } = useUser();
   const drawerRef = useRef<HTMLDivElement>(null);
 
@@ -30,7 +31,7 @@ const Drawer: React.FC<DrawerProps> = ({ isOpen, toggleDrawer, toggleLoginPopup 
   const handleButtonClick = async (btn: string) => {
     switch (btn) {
       case 'Profile Settings':
-        
+        toggleUserSettingsPopup();
         break;
       case 'Login':
         toggleLoginPopup();
