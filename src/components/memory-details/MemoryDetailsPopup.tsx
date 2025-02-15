@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getMemoryData } from '../../services/mapService';
 
 import MemoryDetailsPopupPhotos from './MemoryDetailsPopupPhotos';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 
 interface MemoryDetailsPopupProps {
   memoryId: string;
@@ -26,8 +27,8 @@ const MemoryDetailsPopup: React.FC<MemoryDetailsPopupProps> = ({ memoryId, onClo
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-blue-100 p-6 rounded-md shadow-md w-3/4 h-3/4 flex relative">
         {/* Close Button */}
-        <button onClick={onClose} className="absolute top-2 right-2 bg-gray-200 rounded-full p-1">
-          <span className="block w-4 h-4 text-center cursor-pointer">X</span>
+        <button onClick={onClose} className="absolute top-2 right-2 bg-gray-300 rounded-full p-1">
+          <XMarkIcon className="w-8 h-8 text-gray-800 cursor-pointer" />
         </button>
 
         {/* Left Side - Polaroid-style Image */}

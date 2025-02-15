@@ -88,8 +88,8 @@ const MemoryDetailsPopupPhotos: React.FC<MemoryDetailsPopupPhotosProps> = ({ mem
   return (
     <div className="flex flex-col items-center justify-center space-x-4">
       {/* Pagination of Photos */}
-      <div className="flex">
-        <button className="text-2xl" onClick={handlePrevPage}>{'<'}</button>
+      <div className="flex items-center">
+        <button className="bg-gray-300 rounded-full p-3 mx-2 text-2xl flex items-center justify-center" onClick={handlePrevPage}>{'<'}</button>
         <div className="flex items-start space-x-2 overflow-x-auto">
           {currentPhotos.map((photo, index) => (
             photo.image_url ? (
@@ -103,7 +103,7 @@ const MemoryDetailsPopupPhotos: React.FC<MemoryDetailsPopupPhotosProps> = ({ mem
             ) : null
           ))}
         </div>
-        <button className="text-2xl" onClick={handleNextPage}>{'>'}</button>
+        <button className="bg-gray-300 rounded-full p-3 mx-2 text-2xl flex items-center justify-center" onClick={handleNextPage}>{'>'}</button>
       </div>
       {/* Page Indicator */}
       <div className="flex space-x-1 mt-2">
