@@ -70,6 +70,26 @@ export async function getUserDetails(first_name: string, last_name: string): Pro
   }
 }
 
+export async function getUserDetailsViaID(userId: string): Promise<UserDetails | null> {
+  try {
+    const { data, error } = await supabase
+      .from('profile')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+
+    if (error) {
+      console.error("Error fetching user details:", error);
+      return null;
+    }
+
+    return data as UserDetails;
+  } catch (error) {
+    console.error("Error fetching user details:", error);
+    return null;
+  }
+}
+
 export async function checkIfNameExists(first_name: string, last_name: string): Promise<boolean> {
   try {
     const { data, error } = await supabase

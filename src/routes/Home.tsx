@@ -13,6 +13,7 @@ import PlacePinDetailsPopup from '../components/toolbox/PlacePinDetailsPopup';
 import ChooseStickerPopup from '../components/toolbox/ChooseStickerPopup';
 import MemoryDetailsPopup from '../components/memory-details/MemoryDetailsPopup';
 import ImageViewer from '../components/common/ImageViewer';
+import UserSettingsPopup from '../components/settings/UserSettingsPopup';
 
 import { useToolbox } from '../components/contexts/ToolboxContext';
 import { usePopups } from '../components/contexts/PopupsContext';
@@ -25,6 +26,7 @@ const Home = () => {
   const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
   const [isChooseStickerPopupOpen, setIsChooseStickerPopupOpen] = useState(false);
   const [isMemoryDetailsPopupOpen, setIsMemoryDetailsPopupOpen] = useState(false);
+  const [isUserSettingsPopupOpen, setIsUserSettingsPopupOpen] = useState(false);
   const [selectedMemoryId, setSelectedMemoryId] = useState<string | null>(null);
 
   const [isTriggerDelayedRefresh, setIsTriggerDelayedRefresh] = useState(false);
@@ -98,8 +100,12 @@ const Home = () => {
       }
       {isLoginPopupOpen && <LoginPopup onClose={() => setIsLoginPopupOpen(!isLoginPopupOpen)} />}
       <ImageViewer />
+      <UserSettingsPopup 
+        isShow={isUserSettingsPopupOpen}
+        onClose={() => setIsUserSettingsPopupOpen(!isUserSettingsPopupOpen)} 
+      />
     </div>
-  );
+  );1
 };
 
 export default Home;
