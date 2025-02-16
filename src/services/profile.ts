@@ -5,6 +5,7 @@ interface UserDetails {
   user_id: string;
   first_name: string;
   last_name: string;
+  user_name: string;
   bio?: string;
   avatar_url?: string;
 }
@@ -24,16 +25,33 @@ export async function getUserIdHasProfile(userId: string): Promise<boolean> {
 
     return !!data;
   } catch (error) {
-    console.error(`Error fetching user profile: ${error.message}`);
+    console.error(`Error fetching user profile`);
     return false;
   }
 }
 
-export async function createUserProfile(user_id: string, first_name: string, last_name: string): Promise<any> {
+export async function createUserProfile(user_id: string, first_name: string, last_name: string, user_name: string): Promise<any> {
   try {
+    // Check if the username already exists
+    const { data: existingUser, error: checkError } = await supabase
+      .from('profile')
+      .select('user_name')
+      .eq('user_name', user_name)
+      .single();
+
+    if (checkError && checkError.code !== 'PGRST116') { // Ignore "No rows found" error
+      console.error('Error checking username existence:', checkError);
+      throw checkError;
+    }
+
+    if (existingUser) {
+      throw new Error('Username already exists');
+    }
+
+    // Proceed with creating the user profile
     const { data, error } = await supabase
       .from('profile')
-      .insert({ user_id, first_name, last_name });
+      .insert({ user_id, first_name, last_name, user_name });
 
     if (error) {
       console.error('Error creating user profile:', error);
@@ -47,13 +65,12 @@ export async function createUserProfile(user_id: string, first_name: string, las
   }
 }
 
-export async function getUserDetails(first_name: string, last_name: string): Promise<UserDetails | null> {
+export async function getUserDetails(user_name: string): Promise<UserDetails | null> {
   try {
     const { data, error } = await supabase
       .from('profile')
-      .select('user_id, first_name, last_name, bio, avatar_url')
-      .eq('first_name', first_name)
-      .eq('last_name', last_name)
+      .select('user_id, first_name, last_name, bio, avatar_url, user_name')
+      .eq('user_name', user_name)
       .single();
 
     if (error) {
@@ -138,7 +155,9 @@ export async function uploadAvatar(file: File): Promise<string | undefined> {
 interface UserUpdate {
   first_name?: string;
   last_name?: string;
+  user_name?: string;
   bio?: string;
+  avatar_url?: string;
 }
 
 export async function updateUserDetail(userId: string, updates: UserUpdate): Promise<any> {

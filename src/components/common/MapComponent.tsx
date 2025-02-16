@@ -10,6 +10,7 @@ interface MapComponentProps {
   onMapClick: (lat: number, lng: number) => void;
   setSelectedMemoryId: React.Dispatch<React.SetStateAction<string | null>>;
   setIsMemoryDetailsPopupOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  pageUserID: string | null;
 }
 
 const containerStyle = {
@@ -24,7 +25,7 @@ const center = {
 
 const mapId = import.meta.env.VITE_GOOGLE_MAP_ID as string;
 
-const MapComponent: React.FC<MapComponentProps> = ({ onMapClick, setSelectedMemoryId, setIsMemoryDetailsPopupOpen }) => {
+const MapComponent: React.FC<MapComponentProps> = ({ onMapClick, setSelectedMemoryId, setIsMemoryDetailsPopupOpen, pageUserID }) => {
   const userContext = useUser();
   const toolboxContext = useToolbox();
   
@@ -34,13 +35,16 @@ const MapComponent: React.FC<MapComponentProps> = ({ onMapClick, setSelectedMemo
 
   {/* Fetch memories function */}
   const fetchMemories = async () => {
-    if (!userContext.uid) return;
+    if (!pageUserID) {
+      console.log ('No page user ID. Will not fetch memories.');
+      return;
+    }
 
     setLoading(true);
     setError(null);
 
     try {
-      const userMemories = await getUserMemories(userContext.uid);
+      const userMemories = await getUserMemories(pageUserID);
       setMemories(userMemories || []);
     } catch (err) {
       console.error("Failed to fetch user memories:", err);
@@ -49,11 +53,6 @@ const MapComponent: React.FC<MapComponentProps> = ({ onMapClick, setSelectedMemo
       setLoading(false);
     }
   };
-
-  {/* Fetch user memories whenever userContext.uid changes */}
-  useEffect(() => {
-    fetchMemories();
-  }, [userContext.uid]);
 
   {/* Fetch user memories whenever isRefreshPins is true */}
   useEffect(() => {

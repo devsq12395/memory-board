@@ -16,6 +16,7 @@ function App() {
         <GlobalScript>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/:username" element={<Home />} />
             <Route path="/signup-details" element={<UserSignupDetailsPage />} />
           </Routes>
         </GlobalScript>

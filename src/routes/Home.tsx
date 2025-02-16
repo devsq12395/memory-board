@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
 import OwnersToolbox from "../components/toolbox/OwnersToolbox";
 
@@ -17,11 +18,15 @@ import UserSettingsPopup from '../components/settings/UserSettingsPopup';
 
 import { useToolbox } from '../components/contexts/ToolboxContext';
 import { usePopups } from '../components/contexts/PopupsContext';
+import { getUserDetails } from '../services/profile';
 
 const Home = () => {
   const toolboxContext = useToolbox();
   const popupsContext = usePopups();
 
+  const { username: pageUsername } = useParams<{ username: string }>();
+  
+  const [pageUserID, setPageUserID] = useState<string | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
   const [isChooseStickerPopupOpen, setIsChooseStickerPopupOpen] = useState(false);
@@ -51,7 +56,19 @@ const Home = () => {
       return () => clearTimeout(timeoutId);
     }
   }, [isTriggerDelayedRefresh]);
-  
+
+  useEffect(() => {
+    if (pageUsername) {
+      const fetchUserID = async () => {
+        const userDetails = await getUserDetails(pageUsername);
+        if (userDetails) {
+          setPageUserID(userDetails.user_id);
+          toolboxContext.setIsRefreshPins(true);
+        }
+      };
+      fetchUserID();
+    }
+  }, [pageUsername]);
 
   return (
     <div>
@@ -68,6 +85,7 @@ const Home = () => {
       <OwnersToolbox />
       <MapComponent 
         onMapClick={handleMapClick} 
+        pageUserID={pageUserID}
         setSelectedMemoryId={setSelectedMemoryId}
         setIsMemoryDetailsPopupOpen={setIsMemoryDetailsPopupOpen}
       />
@@ -77,7 +95,9 @@ const Home = () => {
       <button onClick={() => setIsLoginPopupOpen(!isLoginPopupOpen)}>Open Login Popup</button>
 
       {/* Footer Components */}
-      <Footer />
+      <Footer 
+        pageUserID={pageUserID}
+      />
 
       {/* Popups */}
       {toolboxContext.addingNewMemoryId && chosenSticker && 
@@ -106,7 +126,7 @@ const Home = () => {
         onClose={() => setIsUserSettingsPopupOpen(!isUserSettingsPopupOpen)} 
       />
     </div>
-  );1
+  );
 };
 
 export default Home;

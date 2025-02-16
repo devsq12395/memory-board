@@ -6,6 +6,7 @@ import supabase from '../lib/supabase';
 const UserSignupDetailsPage: React.FC = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [userName, setUserName] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -19,7 +20,7 @@ const UserSignupDetailsPage: React.FC = () => {
       }
 
       const userId = user.id;
-      await createUserProfile(userId, firstName, lastName);
+      await createUserProfile(userId, firstName, lastName, userName);
       alert('Profile created successfully!');
       navigate('/');
     } catch (error) {
@@ -49,6 +50,17 @@ const UserSignupDetailsPage: React.FC = () => {
             id="lastName"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
+            required
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          />
+        </div>
+        <div>
+          <label htmlFor="userName" className="block text-sm font-medium text-gray-700">Unique User Name:</label>
+          <input
+            type="text"
+            id="userName"
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
             required
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />

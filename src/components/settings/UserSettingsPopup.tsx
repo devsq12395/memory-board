@@ -3,7 +3,7 @@ import Popup from '../common/Popup';
 import Button from '../common/Button'; // Assuming Button component is defined in this file
 
 import { useUser } from '../contexts/UserContext';
-import { getUserDetailsViaID } from '../../services/profile';
+import { getUserDetailsViaID, updateUserDetail } from '../../services/profile';
 
 interface UserSettingsPopupProps {
   isShow: boolean;
@@ -15,9 +15,13 @@ const UserSettingsPopup: React.FC<UserSettingsPopupProps> = ({ isShow, onClose }
   const [userData, setUserData] = useState({
     first_name: '',
     last_name: '',
+    user_name: '',
     bio: '',
     avatar_url: 'https://res.cloudinary.com/dkloacrmg/image/upload/v1717925908/cld-sample-3.jpg',
   });
+
+  const [uploadStatus, setUploadStatus] = useState<string | null>(null);
+  const [saveStatus, setSaveStatus] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -28,6 +32,7 @@ const UserSettingsPopup: React.FC<UserSettingsPopupProps> = ({ isShow, onClose }
         setUserData({
           first_name: userDetails.first_name,
           last_name: userDetails.last_name,
+          user_name: userDetails.user_name,
           bio: userDetails.bio || '',
           avatar_url: userDetails.avatar_url || 'https://res.cloudinary.com/dkloacrmg/image/upload/v1717925908/cld-sample-3.jpg',
         });
@@ -66,11 +71,15 @@ const UserSettingsPopup: React.FC<UserSettingsPopupProps> = ({ isShow, onClose }
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setUploadStatus('Uploading...');
       try {
         const uploadedUrl = await uploadImageToCloudinary(file);
         setUserData(prevState => ({ ...prevState, avatar_url: uploadedUrl }));
+        setUploadStatus('Upload complete!');
+        setTimeout(() => setUploadStatus(null), 4000);
       } catch (error) {
         console.error('Error uploading image:', error);
+        setUploadStatus('Upload failed!');
       }
     }
   };
@@ -82,6 +91,23 @@ const UserSettingsPopup: React.FC<UserSettingsPopupProps> = ({ isShow, onClose }
 
   const handleAvatarImageClick = () => {
     // Logic to handle avatar image click if needed
+  };
+
+  const handleSaveProfile = async () => {
+    try {
+      if (!userContext.uid) return;
+      await updateUserDetail(userContext.uid, {
+        first_name: userData.first_name,
+        last_name: userData.last_name,
+        bio: userData.bio,
+        avatar_url: userData.avatar_url || 'https://res.cloudinary.com/dkloacrmg/image/upload/v1717925908/cld-sample-3.jpg',
+      });
+      setSaveStatus('User settings saved');
+      setTimeout(() => setSaveStatus(null), 4000);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      setSaveStatus('Error saving user settings');
+    }
   };
 
   return (
@@ -98,6 +124,10 @@ const UserSettingsPopup: React.FC<UserSettingsPopupProps> = ({ isShow, onClose }
             <input type="text" id="last_name" name="last_name" value={userData.last_name} onChange={handleInputChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
           </div>
           <div className="form-group">
+            <label htmlFor="user_name" className="block text-sm font-medium text-gray-700">Unique User Name</label>
+            <input type="text" id="user_name" name="user_name" value={userData.user_name} onChange={handleInputChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+          </div>
+          <div className="form-group">
             <label htmlFor="bio" className="block text-sm font-medium text-gray-700">Bio</label>
             <textarea id="bio" name="bio" rows={3} value={userData.bio} onChange={handleInputChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm resize-none"></textarea>
           </div>
@@ -109,6 +139,9 @@ const UserSettingsPopup: React.FC<UserSettingsPopupProps> = ({ isShow, onClose }
           <Button type="button" text="Choose File" styleType="file" onClick={handleAvatarUploadClick} />
           <input type="file" id="avatar" name="avatar" accept="image/*" onChange={handleImageUpload} className="hidden" />
           <img src={userData.avatar_url} alt="Avatar Preview" onClick={handleAvatarImageClick} className="mt-2 h-35 w-35 object-cover mx-auto border border-gray-300 rounded-md cursor-pointer" />
+          {uploadStatus && <p className={`mt-2 text-sm ${uploadStatus === 'Upload complete!' ? 'text-green-500' : 'text-red-500'}`}>{uploadStatus}</p>}
+          {saveStatus && <p className={`mt-2 text-sm ${saveStatus === 'User settings saved' ? 'text-green-500' : 'text-red-500'}`}>{saveStatus}</p>}
+          <Button type="button" text="Save Profile" styleType="primary" onClick={handleSaveProfile} className="mt-4 self-end" />
         </div>
       </div>
     </Popup>
