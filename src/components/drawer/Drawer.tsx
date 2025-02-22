@@ -98,29 +98,42 @@ const Drawer: React.FC<DrawerProps> = ({ isOpen, toggleDrawer, toggleLoginPopup,
 
   return (
     <div ref={drawerRef} className={`fixed top-0 right-0 w-64 h-full bg-white shadow-lg z-50 transition-transform duration-300 ${isOpen ? 'transform-none' : 'translate-x-full'}`}>
-      {/* User Info */}
-      <div className="flex items-center p-4">
-        <img src={userData.avatar_url} alt="User Profile" className="h-10 w-10 rounded-full mr-3" />
+      <div className="flex flex-col justify-between h-full">
+        {/* Top Part */}
         <div>
-          <p className="font-medium">{userData.first_name} {userData.last_name}</p>
-          <p className="text-sm text-gray-500">{userData.email}</p>
+          {/* User Info */}
+          <div className="flex items-center p-4">
+            <img src={userData.avatar_url} alt="User Profile" className="h-10 w-10 rounded-full mr-3" />
+            <div>
+              <p className="font-medium">{userData.first_name} {userData.last_name}</p>
+              <p className="text-sm text-gray-500">{userData.email}</p>
+            </div>
+          </div>
+          <hr className="border-gray-300" />
+
+          {/* Contents */}
+          {isAuthenticated ? (
+            <div>
+              {/* Buttons when logged in */}
+              {renderButton('Profile Settings', 'Profile Settings')}
+              {renderButton('Logout', 'Logout')}
+            </div>
+          ) : (
+            <div>
+              {/* Buttons when not logged in */}
+              {renderButton('Login / Signup', 'Login')}
+            </div>
+          )}
+        </div>
+
+        {/* Logo */}
+        <div>
+          <hr className="border-gray-300" />
+          <div className="flex justify-center mt-4">
+            <img src="/logo.png" alt="Logo" className="w-full h-auto" />
+          </div>
         </div>
       </div>
-      <hr className="border-gray-300" />
-
-      {/* Contents */}
-      {isAuthenticated ? (
-        <div>
-          {/* Buttons when logged in */}
-          {renderButton('Profile Settings', 'Profile Settings')}
-          {renderButton('Logout', 'Logout')}
-        </div>
-      ) : (
-        <div>
-          {/* Buttons when not logged in */}
-          {renderButton('Login / Signup', 'Login')}
-        </div>
-      )}
     </div>
   );
 };

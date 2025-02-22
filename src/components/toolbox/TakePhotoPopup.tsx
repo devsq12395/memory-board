@@ -64,21 +64,21 @@ const TakePhotoPopup: React.FC = () => {
             {/* Facebook Share Button */}
             <button
               onClick={shareOnFacebook}
-              className="flex items-center justify-center bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition"
+              className="flex items-center justify-center bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition cursor-pointer"
             >
               <FontAwesomeIcon icon={faFacebook} className="w-5 h-5 mr-2" />
             </button>
             {/* Twitter Share Button */}
             <button
               onClick={shareOnTwitter}
-              className="flex items-center justify-center bg-black text-white py-2 px-4 rounded-md hover:bg-gray-800 transition"
+              className="flex items-center justify-center bg-black text-white py-2 px-4 rounded-md hover:bg-gray-800 transition cursor-pointer"
             >
               <FontAwesomeIcon icon={faXTwitter} className="w-5 h-5 mr-2" />
             </button>
             {/* Download Button */}
             <button
               onClick={downloadImage}
-              className="flex items-center justify-center bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition"
+              className="flex items-center justify-center bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition cursor-pointer"
             >
               <FontAwesomeIcon icon={faDownload} className="w-5 h-5 mr-2" />
               Download Image

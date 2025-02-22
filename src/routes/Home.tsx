@@ -105,13 +105,11 @@ const Home = () => {
       />
 
       {/* Popups */}
-      {toolboxContext.addingNewMemoryId && chosenSticker && 
-        <PlacePinDetailsPopup 
-          stickerData={chosenSticker}
-          setIsChooseStickerPopupOpen={setIsChooseStickerPopupOpen}
-          setIsTriggerDelayedRefresh={setIsTriggerDelayedRefresh}
-        />
-      }
+      <PlacePinDetailsPopup 
+        stickerData={chosenSticker}
+        setIsChooseStickerPopupOpen={setIsChooseStickerPopupOpen}
+        setIsTriggerDelayedRefresh={setIsTriggerDelayedRefresh}
+      />
       {isChooseStickerPopupOpen && 
         <ChooseStickerPopup 
           setStickerData={setChosenSticker} 

@@ -114,9 +114,9 @@ const OwnersToolbox: React.FC = () => {
           >
             {/* Place Pin Button */}
             <div
-              onMouseEnter={(e) => showTooltip('Place an event pin on the map', e.clientX, e.clientY)}
+              onMouseEnter={(e) => showTooltip('Place a memory pin on the map', e.clientX, e.clientY)}
               onMouseLeave={hideTooltip}
-              onMouseMove={(e) => showTooltip('Place an event pin on the map', e.clientX, e.clientY)}
+              onMouseMove={(e) => showTooltip('Place a memory pin on the map', e.clientX, e.clientY)}
               style={{ position: 'relative', display: 'inline-block', width: '100%' }}
             >
               <button

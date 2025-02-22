@@ -29,7 +29,7 @@ const Popup: React.FC<PopupProps> = ({children, isShow, titleText, onClose}) => 
         <hr className="my-4 border-t border-gray-200" />
 
         {/* Sections: Divided by rows in desktop and columns in mobile */}
-        <div className="flex flex-col md:flex-row md:divide-x divide-y divide-gray-300">
+        <div className="flex flex-col md:flex-row md:divide-x divide-gray-300 h-[85%]">
           {React.Children.map(children, (child) => (
             <div className="flex-1 p-4">
               {child}

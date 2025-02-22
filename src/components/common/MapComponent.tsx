@@ -42,7 +42,8 @@ const MapComponent: React.FC<MapComponentProps> = ({ onMapClick, setSelectedMemo
 
     try {
       const userMemories = (pageUserID) ? await getUserMemories(pageUserID) : await getLatestMemories(50);
-      setMemories(userMemories || []);
+      const sortedMemories = userMemories.sort((a, b) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime());
+      setMemories(sortedMemories || []);
     } catch (err) {
       console.error("Failed to fetch user memories:", err);
       setError("Failed to load memories.");

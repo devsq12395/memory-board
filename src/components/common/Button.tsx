@@ -39,7 +39,7 @@ const Button: React.FC<ButtonProps> = ({ type, text, onClick, disabled, classNam
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer ${styleClasses} ${className} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+      className={`inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer ${styleClasses} ${className} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
     >
       {icon && <span className="mr-2">{icon}</span>}
       <p className={styleText}>{text}</p>

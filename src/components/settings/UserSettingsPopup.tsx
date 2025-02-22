@@ -112,35 +112,37 @@ const UserSettingsPopup: React.FC<UserSettingsPopupProps> = ({ isShow, onClose }
 
   return (
     <Popup isShow={isShow} titleText="User Settings" onClose={onClose}>
-      <div className="flex flex-col md:flex-row">
-        {/* Left Side - User Details */}
-        <div className="flex flex-col md:w-1/2">
-          <div className="form-group">
-            <label htmlFor="first_name" className="block text-sm font-medium text-gray-700">First Name</label>
-            <input type="text" id="first_name" name="first_name" value={userData.first_name} onChange={handleInputChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-          </div>
-          <div className="form-group">
-            <label htmlFor="last_name" className="block text-sm font-medium text-gray-700">Last Name</label>
-            <input type="text" id="last_name" name="last_name" value={userData.last_name} onChange={handleInputChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-          </div>
-          <div className="form-group">
-            <label htmlFor="user_name" className="block text-sm font-medium text-gray-700">Unique User Name</label>
-            <input type="text" id="user_name" name="user_name" value={userData.user_name} onChange={handleInputChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-          </div>
-          <div className="form-group">
-            <label htmlFor="bio" className="block text-sm font-medium text-gray-700">Bio</label>
-            <textarea id="bio" name="bio" rows={3} value={userData.bio} onChange={handleInputChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm resize-none"></textarea>
-          </div>
+      {/* Left Side - User Details */}
+      <div className="flex flex-col gap-3">
+        <div className="form-group">
+          <label htmlFor="first_name" className="block text-sm font-medium text-gray-700"><strong>First Name</strong> ({userData.first_name.length}/50)</label>
+          <input type="text" id="first_name" name="first_name" value={userData.first_name} onChange={handleInputChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" maxLength={50} />
         </div>
+        <div className="form-group">
+          <label htmlFor="last_name" className="block text-sm font-medium text-gray-700"><strong>Last Name</strong> ({userData.last_name.length}/50)</label>
+          <input type="text" id="last_name" name="last_name" value={userData.last_name} onChange={handleInputChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" maxLength={50} />
+        </div>
+        <div className="form-group">
+          <label htmlFor="user_name" className="block text-sm font-medium text-gray-700"><strong>Unique User Name</strong> ({userData.user_name.length}/50)</label>
+          <input type="text" id="user_name" name="user_name" value={userData.user_name} onChange={handleInputChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" maxLength={50} />
+        </div>
+        <div className="form-group">
+          <label htmlFor="bio" className="block text-sm font-medium text-gray-700"><strong>Bio</strong> ({userData.bio.length}/200)</label>
+          <textarea id="bio" name="bio" rows={3} value={userData.bio} onChange={handleInputChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" maxLength={200}></textarea>
+        </div>
+      </div>
 
-        {/* Right Side - Avatar */}
-        <div className="flex flex-col md:w-1/2 items-center">
+      {/* Right Side - Avatar */}
+      <div className="flex flex-col justify-between w-[100%] h-[100%]">
+        <div className="flex flex-col w-full items-center">
           <h2 className="text-lg font-bold mb-4">Avatar</h2>
           <Button type="button" text="Choose File" styleType="file" onClick={handleAvatarUploadClick} />
           <input type="file" id="avatar" name="avatar" accept="image/*" onChange={handleImageUpload} className="hidden" />
           <img src={userData.avatar_url} alt="Avatar Preview" onClick={handleAvatarImageClick} className="mt-2 h-35 w-35 object-cover mx-auto border border-gray-300 rounded-md cursor-pointer" />
           {uploadStatus && <p className={`mt-2 text-sm ${uploadStatus === 'Upload complete!' ? 'text-green-500' : 'text-red-500'}`}>{uploadStatus}</p>}
           {saveStatus && <p className={`mt-2 text-sm ${saveStatus === 'User settings saved' ? 'text-green-500' : 'text-red-500'}`}>{saveStatus}</p>}
+        </div>
+        <div className="flex flex-row w-full justify-end">
           <Button type="button" text="Save Profile" styleType="primary" onClick={handleSaveProfile} className="mt-4 self-end" />
         </div>
       </div>
