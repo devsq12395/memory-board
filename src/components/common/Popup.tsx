@@ -13,7 +13,7 @@ const Popup: React.FC<PopupProps> = ({children, isShow, titleText, onClose}) => 
   if (!isShow) return null;
 
   return (
-    <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50`}>
+    <div className={`fixed inset-0 bg-black/50 flex items-center justify-center z-50`}>
       <div className="p-4 bg-white shadow-md rounded-md w-1/2 h-[60%] min-w-[500px] min-h-[500px]">
         {/* Header */}
         <div className="flex flex-row justify-between items-center">

@@ -26,6 +26,10 @@ const Button: React.FC<ButtonProps> = ({ type, text, onClick, disabled, classNam
       styleClasses = 'bg-blue-100 text-blue-700 hover:bg-blue-200 border-b border-gray-200';
       styleText = 'text-left';
       break;
+    case 'main-ui':
+      // Used in Owner's Toolbox
+      styleClasses = 'bg-gray-100 text-gray-700 hover:bg-gray-200 border-b border-gray-200';
+      break;
     default:
       styleClasses = 'bg-indigo-600 hover:bg-indigo-700 text-white';
   }

@@ -20,7 +20,7 @@ const ImageViewer: React.FC = () => {
   if (!popupsContext.isImagePopupOpen || !photoData) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-70">
+    <div className="fixed inset-0 bg-black/75 flex justify-center items-center z-70">
       <div className="relative bg-white p-4 rounded-lg shadow-lg max-w-3xl w-full">
         <button
           className="absolute top-2 left-2 text-white text-4xl bg-gray-400 bg-opacity-75 p-2 rounded-full hover:bg-opacity-75 cursor-pointer"

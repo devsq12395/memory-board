@@ -1,7 +1,7 @@
 import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
 import React, { useState, useEffect } from "react";
 import MapPin from "./MapPin";
-import { getUserMemories } from "../../services/mapService";
+import { getUserMemories, getLatestMemories } from "../../services/memoryService";
 
 import { useUser } from "../contexts/UserContext";
 import { useToolbox } from "../contexts/ToolboxContext";
@@ -19,9 +19,11 @@ const containerStyle = {
 };
 
 const center = {
-  lat: 37.7749, // Default latitude (San Francisco)
-  lng: -122.4194, // Default longitude
+  lat: 33.8869, // Latitude for Tunisia
+  lng: 9.5375, // Longitude for Tunisia
 };
+
+const mapZoom = 3;
 
 const mapId = import.meta.env.VITE_GOOGLE_MAP_ID as string;
 
@@ -35,16 +37,11 @@ const MapComponent: React.FC<MapComponentProps> = ({ onMapClick, setSelectedMemo
 
   {/* Fetch memories function */}
   const fetchMemories = async () => {
-    if (!pageUserID) {
-      console.log ('No page user ID. Will not fetch memories.');
-      return;
-    }
-
     setLoading(true);
     setError(null);
 
     try {
-      const userMemories = await getUserMemories(pageUserID);
+      const userMemories = (pageUserID) ? await getUserMemories(pageUserID) : await getLatestMemories(50);
       setMemories(userMemories || []);
     } catch (err) {
       console.error("Failed to fetch user memories:", err);
@@ -90,7 +87,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ onMapClick, setSelectedMemo
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={center}
-        zoom={5}
+        zoom={mapZoom}
         onLoad={onLoad}
         options={{
           mapId: mapId,

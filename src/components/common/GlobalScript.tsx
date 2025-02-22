@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../contexts/UserContext';
 import supabase from '../../lib/supabase';
-import { getUserIdHasProfile } from '../../services/profile';
+import { getUserDetailsViaID, getUserIdHasProfile } from '../../services/profile';
 
 const GlobalScript: React.FC = ({ children }) => {
   const userContext = useUser();
@@ -18,6 +18,11 @@ const GlobalScript: React.FC = ({ children }) => {
         } else {
           userContext.setIsAuthenticated(true);
           userContext.setUid(user.id);
+          
+          const userData = await getUserDetailsViaID(user.id);
+          if (userData && userData.user_name && userData.user_name.length > 0) {
+            navigate(`/${userData.user_name}`);
+          }
         }
       } else {
         userContext.setIsAuthenticated(false);

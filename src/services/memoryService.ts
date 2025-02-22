@@ -92,7 +92,7 @@ export const getMemoryData = async (memoryId: string) => {
   try {
     const { data, error } = await supabase
       .from('memory')
-      .select('title, thumbnail_url, bottom_img_url, desc, date')
+      .select('title, thumbnail_url, bottom_img_url, desc, date, user_id')
       .eq('id', memoryId)
       .single();
 
@@ -106,3 +106,62 @@ export const getMemoryData = async (memoryId: string) => {
     throw error;
   }
 };
+
+export async function getLatestMemories(limit: number) {
+  try {
+    const { data, error } = await supabase
+      .from('memory')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      console.error('Error fetching latest memories:', error);
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Unexpected error fetching latest memories:', error);
+    throw error;
+  }
+}
+
+export async function getCommentsByMemoryId(memoryId: string) {
+  try {
+    const { data, error } = await supabase
+      .from('memory_comment')
+      .select('*')
+      .eq('memory_id', memoryId);
+
+    if (error) {
+      console.error('Error fetching comments for memory:', error);
+      throw error;
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('Unexpected error fetching comments for memory:', error);
+    throw error;
+  }
+}
+
+export async function addComment(memoryId: string, userId: string, text: string) {
+  try {
+    const { data, error } = await supabase
+      .from('memory_comment')
+      .insert({ memory_id: memoryId, commenter_user_id: userId, text })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error adding comment:', error);
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Unexpected error adding comment:', error);
+    throw error;
+  }
+}

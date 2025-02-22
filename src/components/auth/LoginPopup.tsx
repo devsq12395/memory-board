@@ -11,7 +11,7 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ onClose }) => {
   const [isTermsChecked, setIsTermsChecked] = useState(false);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={onClose}>
       <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl p-4" onClick={(e) => e.stopPropagation()}>
         {/* Close button */}
         <div className="flex justify-end">
@@ -47,7 +47,7 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ onClose }) => {
 
         {/* Terms Checkbox */}
         <div className="p-6 pt-0 flex justify-center">
-          <label className="flex items-center space-x-2">
+          <label className="flex items-center space-x-2 cursor-pointer">
             <input type="checkbox" checked={isTermsChecked} onChange={() => setIsTermsChecked(!isTermsChecked)} />
             <span className="text-sm">
               To login/signup, you must agree to our{' '}

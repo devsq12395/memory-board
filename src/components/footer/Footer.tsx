@@ -15,7 +15,9 @@ const Footer = ({ pageUserID }: FooterProps) => {
 
   useEffect(() => {
     const fetchUserDetails = async () => {
-      if (!pageUserID) return;
+      if (!pageUserID) {
+        return;
+      }
 
       const userDetails = await getUserDetailsViaID(pageUserID);
       if (userDetails) {
@@ -36,10 +38,14 @@ const Footer = ({ pageUserID }: FooterProps) => {
       <div className="absolute left-[75px] bottom-[50px]">
         <img src={userData.avatar_url} alt="Avatar" className="w-[200px] h-[200px] rounded-full" />
       </div>
-      <h1 className="mx-[300px] my-[15px] text-3xl font-bold">{userData.first_name}'s Memory Board</h1>
+      <h1 className="mx-[300px] my-[15px] text-3xl font-bold">
+        {pageUserID ? userData.first_name + 's Memory Board' : 'Welcome to MemoryBoard.com!'}
+      </h1>
       <hr className="mx-[300px] my-[15px] border-t border-gray-300" />
 
-      <p className="mx-[300px] text-m">{userData.bio}</p>
+      <p className="mx-[300px] text-m">
+      {pageUserID ? userData.bio : 'Here are the past 50 memories created all over the world. Start sharing yours now!'}
+      </p>
     </footer>
   );
 };

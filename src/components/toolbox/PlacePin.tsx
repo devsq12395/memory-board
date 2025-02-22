@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useToolbox } from '../contexts/ToolboxContext';
 import { useUser } from '../contexts/UserContext';
-import { addUserMemory } from '../../services/mapService';
+import { addUserMemory } from '../../services/memoryService';
 
 interface PlacePinProps {
   pinPosition: { lat: number; lng: number } | null;

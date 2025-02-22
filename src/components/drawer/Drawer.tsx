@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from 'react';
-import { XMarkIcon } from '@heroicons/react/24/outline';
-import { useUser } from '../contexts/UserContext';
+import React, { useEffect, useRef, useState } from 'react';
 import supabase from '../../lib/supabase';
 import Button from '../common/Button';
+
+import { useUser } from '../contexts/UserContext';
+import { getUserDetailsViaID } from '../../services/profile';
 
 interface DrawerProps {
   isOpen: boolean;
@@ -12,8 +13,47 @@ interface DrawerProps {
 }
 
 const Drawer: React.FC<DrawerProps> = ({ isOpen, toggleDrawer, toggleLoginPopup, toggleUserSettingsPopup }) => {
-  const { isAuthenticated, setIsAuthenticated, setUid } = useUser();
+  const { isAuthenticated, setIsAuthenticated, setUid, uid } = useUser();
   const drawerRef = useRef<HTMLDivElement>(null);
+
+  const [userData, setUserData] = useState({
+    first_name: '',
+    last_name: '',
+    bio: '',
+    avatar_url: 'https://res.cloudinary.com/dkloacrmg/image/upload/v1717925908/cld-sample-3.jpg',
+    email: ''
+  });
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      if (!uid){
+        setUserData({
+          first_name: '',
+          last_name: '',
+          bio: '',
+          avatar_url: 'https://res.cloudinary.com/dkloacrmg/image/upload/v1717925908/cld-sample-3.jpg',
+          email: ''
+        });
+        return;
+      }
+
+      const userDetails = await getUserDetailsViaID(uid);
+      if (userDetails) {
+        const { data: { session } } = await supabase.auth.getSession();
+        const email = session?.user?.email || '';
+
+        setUserData({
+          first_name: userDetails.first_name,
+          last_name: userDetails.last_name,
+          bio: userDetails.bio || '',
+          avatar_url: userDetails.avatar_url || 'https://res.cloudinary.com/dkloacrmg/image/upload/v1717925908/cld-sample-3.jpg',
+          email: email
+        });
+      }
+    };
+
+    fetchUserDetails();
+  }, [uid]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -60,10 +100,10 @@ const Drawer: React.FC<DrawerProps> = ({ isOpen, toggleDrawer, toggleLoginPopup,
     <div ref={drawerRef} className={`fixed top-0 right-0 w-64 h-full bg-white shadow-lg z-50 transition-transform duration-300 ${isOpen ? 'transform-none' : 'translate-x-full'}`}>
       {/* User Info */}
       <div className="flex items-center p-4">
-        <img src="/path/to/profile.jpg" alt="User Profile" className="h-10 w-10 rounded-full mr-3" />
+        <img src={userData.avatar_url} alt="User Profile" className="h-10 w-10 rounded-full mr-3" />
         <div>
-          <p className="font-medium">Sandra Adams</p>
-          <p className="text-sm text-gray-500">sandra_a88@gmail.com</p>
+          <p className="font-medium">{userData.first_name} {userData.last_name}</p>
+          <p className="text-sm text-gray-500">{userData.email}</p>
         </div>
       </div>
       <hr className="border-gray-300" />

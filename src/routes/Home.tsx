@@ -17,12 +17,14 @@ import ImageViewer from '../components/common/ImageViewer';
 import UserSettingsPopup from '../components/settings/UserSettingsPopup';
 
 import { useToolbox } from '../components/contexts/ToolboxContext';
+import { useUser } from '../components/contexts/UserContext';
 import { usePopups } from '../components/contexts/PopupsContext';
 import { getUserDetails } from '../services/profile';
 
 const Home = () => {
   const toolboxContext = useToolbox();
   const popupsContext = usePopups();
+  const userContext = useUser();
 
   const { username: pageUsername } = useParams<{ username: string }>();
   
@@ -63,11 +65,13 @@ const Home = () => {
         const userDetails = await getUserDetails(pageUsername);
         if (userDetails) {
           setPageUserID(userDetails.user_id);
-          toolboxContext.setIsRefreshPins(true);
+        } else {
+          setPageUserID(null);
         }
       };
       fetchUserID();
     }
+    toolboxContext.setIsRefreshPins(true);
   }, [pageUsername]);
 
   return (
@@ -82,7 +86,7 @@ const Home = () => {
       />
       
       {/* Main Components */}
-      <OwnersToolbox />
+      {pageUserID && pageUserID == userContext.uid && <OwnersToolbox />}
       <MapComponent 
         onMapClick={handleMapClick} 
         pageUserID={pageUserID}
