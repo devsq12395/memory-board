@@ -3,14 +3,14 @@ import { useToolbox } from '../contexts/ToolboxContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronUpIcon, ChevronDownIcon, MapPinIcon, CameraIcon } from '@heroicons/react/24/solid';
 import html2canvas from 'html2canvas';
-import { uploadAvatar } from '../../services/profile';
+import { uploadToCloudinary } from '../../services/cloudinaryService';
 
 const OwnersToolbox: React.FC = () => {
   const toolboxRef = useRef<HTMLDivElement | null>(null);
-  const { setIsPlacingPin } = useToolbox();
+  const toolboxContext = useToolbox();
   const [isExpanded, setIsExpanded] = useState(true);
+  const [tooltip, setTooltip] = useState({ visible: false, content: '', position: { x: 0, y: 0 } });
 
-  // Handles dragging the toolbox
   const handleDragStart = (e: React.MouseEvent) => {
     const element = toolboxRef.current;
     if (element) {
@@ -36,27 +36,49 @@ const OwnersToolbox: React.FC = () => {
   };
 
   const handlePlacePinClick = () => {
-    setIsPlacingPin(true);
+    toolboxContext.setIsPlacingPin(true);
   };
 
   const handleCaptureAndShare = async () => {
-    const mapElement = document.querySelector('.w-screen.m-0.p-0'); // Assuming this is the map container
+    const mapElement = document.querySelector('.w-screen.m-0.p-0') as HTMLElement; 
+    
     if (!mapElement) {
       console.error('Map element not found');
       return;
     }
 
+    toolboxContext.setSharePhotoUrl(null);
+    toolboxContext.setSharePhotoPopupIsOpen(true);
+
     try {
-      const canvas = await html2canvas(mapElement);
-      canvas.toBlob(async (blob: Blob | null) => {
-        if (blob) {
-          const imageUrl = await uploadAvatar(new File([blob], 'map.png', { type: 'image/png' }));
-          console.log('Uploaded image URL:', imageUrl);
-        }
-      });
+      try {
+        const canvas = await html2canvas(mapElement, {
+          useCORS: true,
+          allowTaint: false
+        });
+        canvas.toBlob(async (blob: Blob | null) => {
+          if (blob) {
+            // Upload the image directly to Cloudinary
+            const randomFilename = Math.random().toString(36).substring(2, 15) + '.png';
+            const imageUrl = await uploadToCloudinary(new File([blob], randomFilename, { type: 'image/png' }));
+
+            toolboxContext.setSharePhotoUrl(imageUrl || null);
+          }
+        });
+      } catch (error) {
+        console.error('Error capturing the map:', error);
+      }
     } catch (error) {
       console.error('Error capturing or uploading image:', error);
     }
+  };
+
+  const showTooltip = (content: string, x: number, y: number) => {
+    setTooltip({ visible: true, content, position: { x, y } });
+  };
+
+  const hideTooltip = () => {
+    setTooltip({ ...tooltip, visible: false });
   };
 
   useEffect(() => {
@@ -76,7 +98,7 @@ const OwnersToolbox: React.FC = () => {
       {/* Header with Collapse Toggle */}
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-gray-800">Owner's Toolbox</h3>
-        <button onClick={() => setIsExpanded(!isExpanded)} className="text-gray-600 hover:text-gray-800">
+        <button onClick={() => setIsExpanded(!isExpanded)} className="text-gray-600 hover:text-gray-800 cursor-pointer">
           {isExpanded ? <ChevronUpIcon className="w-5 h-5" /> : <ChevronDownIcon className="w-5 h-5" />}
         </button>
       </div>
@@ -91,23 +113,54 @@ const OwnersToolbox: React.FC = () => {
             className="mt-3 space-y-2"
           >
             {/* Place Pin Button */}
-            <button
-              onClick={handlePlacePinClick}
-              className="flex items-center justify-center w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition cursor-pointer"
+            <div
+              onMouseEnter={(e) => showTooltip('Place an event pin on the map', e.clientX, e.clientY)}
+              onMouseLeave={hideTooltip}
+              onMouseMove={(e) => showTooltip('Place an event pin on the map', e.clientX, e.clientY)}
+              style={{ position: 'relative', display: 'inline-block', width: '100%' }}
             >
-              <MapPinIcon className="w-5 h-5 mr-2" /> Place Pin
-            </button>
+              <button
+                onClick={handlePlacePinClick}
+                className="flex items-center justify-center w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition cursor-pointer"
+              >
+                <MapPinIcon className="w-5 h-5 mr-2" /> Place Pin
+              </button>
+            </div>
 
             {/* Camera Button */}
-            <button
-              onClick={handleCaptureAndShare}
-              className="flex items-center justify-center w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition cursor-pointer"
+            <div
+              onMouseEnter={(e) => showTooltip('Take a screenshot of where the map is and you can share this photo on social media.', e.clientX, e.clientY)}
+              onMouseLeave={hideTooltip}
+              onMouseMove={(e) => showTooltip('Take a screenshot of where the map is and you can share this photo on social media.', e.clientX, e.clientY)}
+              style={{ position: 'relative', display: 'inline-block', width: '100%' }}
             >
-              <CameraIcon className="w-5 h-5 mr-2" /> Take Photo & Share
-            </button>
+              <button
+                onClick={handleCaptureAndShare}
+                className="flex items-center justify-center w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition cursor-pointer"
+              >
+                <CameraIcon className="w-5 h-5 mr-2" /> Take Photo & Share
+              </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
+      {tooltip.visible && (
+        <div
+          style={{
+            position: 'fixed',
+            top: tooltip.position.y + 10,
+            left: tooltip.position.x + 10,
+            backgroundColor: 'black',
+            color: 'white',
+            padding: '5px',
+            borderRadius: '3px',
+            pointerEvents: 'none',
+            zIndex: 1000,
+          }}
+        >
+          {tooltip.content}
+        </div>
+      )}
     </div>
   );
 };

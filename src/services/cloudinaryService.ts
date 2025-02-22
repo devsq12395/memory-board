@@ -5,7 +5,7 @@ export async function uploadToCloudinary(file: File): Promise<string | undefined
 
   try {
     const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
-    const cloudinaryUrl = import.meta.env.VITE_CLOUDINARY_URL;
+    const cloudinaryUrl = import.meta.env.VITE_CLOUDINARY_API_URL;
 
     if (!uploadPreset || !cloudinaryUrl) {
       console.error("Cloudinary environment variables are missing.");

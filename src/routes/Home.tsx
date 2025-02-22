@@ -15,6 +15,7 @@ import ChooseStickerPopup from '../components/toolbox/ChooseStickerPopup';
 import MemoryDetailsPopup from '../components/memory-details/MemoryDetailsPopup';
 import ImageViewer from '../components/common/ImageViewer';
 import UserSettingsPopup from '../components/settings/UserSettingsPopup';
+import TakePhotoPopup from '../components/toolbox/TakePhotoPopup';
 
 import { useToolbox } from '../components/contexts/ToolboxContext';
 import { useUser } from '../components/contexts/UserContext';
@@ -129,6 +130,8 @@ const Home = () => {
         isShow={isUserSettingsPopupOpen}
         onClose={() => setIsUserSettingsPopupOpen(!isUserSettingsPopupOpen)} 
       />
+
+      <TakePhotoPopup />
     </div>
   );
 };
