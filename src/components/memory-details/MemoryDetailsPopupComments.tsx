@@ -84,12 +84,7 @@ const MemoryDetailsPopupComments: React.FC<MemoryDetailsPopupCommentsProps> = ({
           <p className="text-sm text-red-500">{submitCommentStatus}</p>
         )}
         <div className="flex justify-end">
-          <button
-            className="bg-blue-500 text-white px-3 py-1 rounded-full cursor-pointer"
-            onClick={handleSubmitComment}
-          >
-            Submit Comment
-          </button>
+          <Button type="button" text="Submit Comment" styleType="primary" onClick={handleSubmitComment} />
         </div>
       </div>
 
