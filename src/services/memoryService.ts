@@ -134,7 +134,8 @@ export async function getCommentsByMemoryId(memoryId: string) {
     const { data, error } = await supabase
       .from('memory_comment')
       .select('*')
-      .eq('memory_id', memoryId);
+      .eq('memory_id', memoryId)
+      .order('created_at', { ascending: false });
 
     if (error) {
       console.error('Error fetching comments for memory:', error);
