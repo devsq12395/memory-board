@@ -18,7 +18,6 @@ const NotificationButton: React.FC<NotificationButtonProps> = ({ toggleNotificat
       if (uid) {
         const count = await getNumberOfUninteractedNotifications(uid);
         setUninteractedCount(count);
-        console.log('count', count);
       }
     };
     fetchCount();
