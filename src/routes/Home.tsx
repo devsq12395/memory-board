@@ -32,7 +32,8 @@ const Home = () => {
   const userContext = useUser();
 
   const { username: pageUsername } = useParams<{ username: string }>();
-  
+  const { memoryId: pageMemoryId } = useParams<{ memoryId: string }>();
+
   const [pageUserID, setPageUserID] = useState<string | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
@@ -79,6 +80,19 @@ const Home = () => {
     }
     toolboxContext.setIsRefreshPins(true);
   }, [pageUsername]);
+
+  useEffect(() => {
+    if (pageMemoryId) {
+      setSelectedMemoryId(pageMemoryId);
+      setIsMemoryDetailsPopupOpen(true);
+    }
+  }, [selectedMemoryId]);
+
+  const closeMemoryDetailsPopup = () => {
+    setIsMemoryDetailsPopupOpen(false);
+    setSelectedMemoryId(null);
+    window.history.pushState({}, '', `/${pageUsername}`);
+  };
 
   return (
     <div>
@@ -139,7 +153,7 @@ const Home = () => {
       {isMemoryDetailsPopupOpen && 
         <MemoryDetailsPopup 
           memoryId={selectedMemoryId || ''} 
-          onClose={() => setIsMemoryDetailsPopupOpen(false)} 
+          onClose={closeMemoryDetailsPopup} 
         />
       }
       {isLoginPopupOpen && <LoginPopup onClose={() => setIsLoginPopupOpen(!isLoginPopupOpen)} />}

@@ -73,6 +73,7 @@ const MemoryDetailsPopupComments: React.FC<MemoryDetailsPopupCommentsProps> = ({
       {/* Comment Input and Submit Button */}
       <div className="flex flex-col space-y-2 w-full">
         <textarea
+          maxLength={200}
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
           placeholder="Write a comment..."
@@ -83,7 +84,10 @@ const MemoryDetailsPopupComments: React.FC<MemoryDetailsPopupCommentsProps> = ({
         {submitCommentStatus && (
           <p className="text-sm text-red-500">{submitCommentStatus}</p>
         )}
-        <div className="flex justify-end">
+        <div className="flex flex-row justify-between">
+          <div className="text-right text-sm text-gray-500">
+            {newComment.length <= 0 ? "" : ` ${200 - newComment.length} Characters remaining`}
+          </div>
           <Button type="button" text="Submit Comment" styleType="primary" onClick={handleSubmitComment} />
         </div>
       </div>

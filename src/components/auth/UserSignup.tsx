@@ -10,10 +10,13 @@ const UserSignup: React.FC<UserSignupProps> = ({ disabled }) => {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleSignup = async (event: React.FormEvent) => {
     event.preventDefault();
+    setLoading(true);
     const { data, error } = await signup(email, password);
+    setLoading(false);
     
     if (data) {
       setSuccessMessage('Signup almost done! Please check your email for to verify your account.');
@@ -43,12 +46,12 @@ const UserSignup: React.FC<UserSignupProps> = ({ disabled }) => {
       />
       <button
         type="submit"
-        disabled={disabled}
+        disabled={disabled || loading}
         className={`p-3 rounded w-full ${
-          disabled ? 'bg-gray-300 cursor-not-allowed text-gray-700' : 'bg-indigo-500 hover:bg-indigo-600 text-white cursor-pointer'
+          (disabled || loading) ? 'bg-gray-300 cursor-not-allowed text-gray-700' : 'bg-indigo-500 hover:bg-indigo-600 text-white cursor-pointer'
         }`}
       >
-        Sign Up
+        {loading ? 'Signing Up...' : 'Sign Up'}
       </button>
       {errorMessage && <p className="text-red-500">{errorMessage}</p>}
       {successMessage && <p className="text-green-500">{successMessage}</p>}

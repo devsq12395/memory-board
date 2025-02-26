@@ -17,6 +17,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/:username" element={<Home />} />
+            <Route path="/:username/:memoryId" element={<Home />} />
             <Route path="/signup-details" element={<UserSignupDetailsPage />} />
           </Routes>
         </GlobalScript>

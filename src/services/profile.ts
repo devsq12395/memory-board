@@ -107,6 +107,35 @@ export async function getUserDetailsViaID(userId: string): Promise<UserDetails |
   }
 }
 
+export async function getDetailsOfUsers(user_ids: string[]): Promise<(UserDetails | null)[]> {
+  try {
+    const userDetailsList: (UserDetails | null)[] = [];
+
+    for (const userId of user_ids) {
+      const hasProfile = await getUserIdHasProfile(userId);
+      if (!hasProfile) {
+        console.error(`Profile not found for user ID: ${userId}`);
+        userDetailsList.push(null);
+        continue;
+      }
+
+      const userDetails = await getUserDetailsViaID(userId);
+      if (!userDetails) {
+        console.error(`Details not found for user ID: ${userId}`);
+        userDetailsList.push(null);
+        continue;
+      }
+
+      userDetailsList.push(userDetails);
+    }
+
+    return userDetailsList;
+  } catch (error) {
+    console.error('Error fetching user details:', error);
+    return [];
+  }
+}
+
 export async function checkIfNameExists(first_name: string, last_name: string): Promise<boolean> {
   try {
     const { data, error } = await supabase

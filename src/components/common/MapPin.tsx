@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useParams } from 'react-router-dom';
 
 interface PinProps {
   map: google.maps.Map | null;
@@ -13,6 +14,7 @@ interface PinProps {
 
 const MapPin: React.FC<PinProps> = ({ map, position, mainImageUrl, smallImageUrl, pinSymbolUrl, memoryId, setSelectedMemoryId, setIsMemoryDetailsPopupOpen }) => {
   const [zoomLevel, setZoomLevel] = useState<number>(map?.getZoom() || 10);
+  const { username: pageUsername } = useParams<{ username: string }>();
 
   useEffect(() => {
     if (!map) return;
@@ -115,6 +117,7 @@ const MapPin: React.FC<PinProps> = ({ map, position, mainImageUrl, smallImageUrl
         console.log ('setting memory id to ', memoryId);
         setSelectedMemoryId(memoryId);
         setIsMemoryDetailsPopupOpen(true);
+        window.history.pushState({}, '', `/${pageUsername}/${memoryId}`);
       });
     };
 
