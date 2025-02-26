@@ -22,6 +22,10 @@ import { useUser } from '../components/contexts/UserContext';
 import { usePopups } from '../components/contexts/PopupsContext';
 import { getUserDetails } from '../services/profile';
 
+import LoginButton from '../components/common/LoginButton';
+import NotificationButton from '../components/common/notification/NotificationButton';
+import NotificationPanel from '../components/common/notification/NotificationPanel';
+
 const Home = () => {
   const toolboxContext = useToolbox();
   const popupsContext = usePopups();
@@ -32,6 +36,7 @@ const Home = () => {
   const [pageUserID, setPageUserID] = useState<string | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
+  const [isNotificationPanelOpen, setIsNotificationPanelOpen] = useState(false);
   const [isChooseStickerPopupOpen, setIsChooseStickerPopupOpen] = useState(false);
   const [isMemoryDetailsPopupOpen, setIsMemoryDetailsPopupOpen] = useState(false);
   const [isUserSettingsPopupOpen, setIsUserSettingsPopupOpen] = useState(false);
@@ -77,8 +82,23 @@ const Home = () => {
 
   return (
     <div>
-      {/* Drawer */}
+      {/* Top Right Buttons */}
+      {!userContext.isAuthenticated ? <>
+        <LoginButton 
+          toggleLoginPopup={() => setIsLoginPopupOpen(!isLoginPopupOpen)}
+        />
+      </>:<>
+        <NotificationButton 
+          toggleNotification={() => setIsNotificationPanelOpen(!isNotificationPanelOpen)}
+        >
+          <NotificationPanel 
+            isOpen={isNotificationPanelOpen} 
+          />
+        </NotificationButton>
+      </>}
       <DrawerButton toggleDrawer={() => setIsDrawerOpen(!isDrawerOpen)} />
+
+      {/* Drawer */}
       <Drawer 
         isOpen={isDrawerOpen} 
         toggleDrawer={() => setIsDrawerOpen(!isDrawerOpen)} 
