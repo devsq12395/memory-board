@@ -5,6 +5,7 @@ import { getUserDetailsViaID } from '../../services/profile';
 import MemoryDetailsPopupPhotos from './MemoryDetailsPopupPhotos';
 import MemoryDetailsPopupComments from './MemoryDetailsPopupComments';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import Button from '../common/Button';
 
 interface MemoryDetailsPopupProps {
   memoryId: string;
@@ -14,6 +15,27 @@ interface MemoryDetailsPopupProps {
 const MemoryDetailsPopup: React.FC<MemoryDetailsPopupProps> = ({ memoryId, onClose }) => {
   const [memoryData, setMemoryData] = useState<any>(null);
   const [userDetails, setUserDetails] = useState<any>(null);
+  const [thumbnailStyle, setThumbnailStyle] = useState<{ width: string; height: string }>({ width: '100%', height: 'auto' });
+
+  const handleThumbnailLoad = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    const img = e.currentTarget;
+    const parentWidth = img.parentElement?.clientWidth || 300;
+    const naturalWidth = img.naturalWidth;
+    const naturalHeight = img.naturalHeight;
+    let newHeight: number;
+    
+    if (naturalWidth > naturalHeight) {
+      // Landscape: 4:3 ratio: height = parentWidth * (3/4)
+      newHeight = parentWidth * (3 / 4);
+    } else if (naturalWidth < naturalHeight) {
+      // Portrait: 3:4 ratio: height = parentWidth * (4/3)
+      newHeight = parentWidth * (4 / 3);
+    } else {
+      // Square: height equals parent's width
+      newHeight = parentWidth;
+    }
+    setThumbnailStyle({ width: '100%', height: `${newHeight}px` });
+  };
 
   useEffect(() => {
     const fetchMemoryData = async () => {
@@ -40,12 +62,16 @@ const MemoryDetailsPopup: React.FC<MemoryDetailsPopupProps> = ({ memoryId, onClo
         {/* Left Side - Polaroid-style Image */}
         <div className="flex-shrink-0 mr-4">
           <div className="relative border-4 border-white p-2 bg-white shadow-md">
-            <img src={memoryData.thumbnail_url} alt="Memory Thumbnail" className="w-88 h-88 object-cover" />
-            <img src={memoryData.bottom_img_url} alt="Sticker" className="absolute bottom-[-145px] left-1/2 transform -translate-x-1/2 w-56 h-56" />
+            <img 
+              src={memoryData.thumbnail_url} 
+              alt="Memory Thumbnail" 
+              onLoad={handleThumbnailLoad} 
+              style={thumbnailStyle} 
+              className="object-cover max-w-120 max-h-120" 
+            />
           </div>
-          <div className="mt-[160px] flex justify-around">
-            <button className="bg-blue-500 text-white px-3 py-1 rounded-full cursor-pointer">Edit Memory</button>
-            <button className="bg-blue-500 text-white px-3 py-1 rounded-full cursor-pointer">Share</button>
+          <div className="mt-[20px] flex justify-around">
+            <Button type="button" text="Edit Memory" styleType="primary" />
           </div>
         </div>
 

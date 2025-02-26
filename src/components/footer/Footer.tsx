@@ -34,18 +34,19 @@ const Footer = ({ pageUserID }: FooterProps) => {
   }, [pageUserID]);
 
   return (
-    <footer className="absolute top-[85vh] h-[15vh] w-full min-w-[1200px] bg-blue-100">
-      <div className="absolute left-[75px] bottom-[50px]">
-        <img src={userData.avatar_url} alt="Avatar" className="w-[200px] h-[200px] rounded-full" />
+    <footer className="fixed bottom-0 md:absolute md:top-[85vh] h-[15vh] w-full min-w-[1200px] bg-blue-100 border-4 border-gray-100 rounded-lg shadow-lg">
+      <div className="absolute left-[5px] bottom-[83px] md:left-[75px] md:bottom-[50px]">
+        <img src={userData.avatar_url} alt="Avatar" className="w-[100px] h-[100px] md:w-[200px] md:h-[200px] border-4 border-gray-100 md:rounded-full shadow-md object-cover" />
       </div>
-      <h1 className="mx-[300px] my-[15px] text-3xl font-bold">
-        {pageUserID ? userData.first_name + 's Memory Board' : 'Welcome to MemoryBoard.com!'}
-      </h1>
-      <hr className="mx-[300px] my-[15px] border-t border-gray-300" />
-
-      <p className="mx-[300px] text-m">
-      {pageUserID ? userData.bio : 'Here are the past 50 memories created all over the world. Start sharing yours now!'}
-      </p>
+      <div className="mx-[10px] my-[10px] md:mx-[300px] md:my-[15px] flex flex-col gap-2">
+        <h1 className="text-m md:text-3xl font-bold">
+          {pageUserID ? `${userData.first_name} ${userData.last_name}` : 'Welcome to MemoryBoard.com!'}
+        </h1>
+        <hr className="text-m md:text-m w-full border-t border-gray-300" />
+        <p className="text-sm md:text-m">
+          {pageUserID ? userData.bio : 'Here are the past 50 memories created all over the world. Start sharing yours now!'}
+        </p>
+      </div>
     </footer>
   );
 };

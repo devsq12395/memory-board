@@ -1,4 +1,6 @@
 import supabase from '../lib/supabase';
+import { createNotification } from './notificationService';
+import { getDetailsOfUsers } from './profile';
 
 export async function getUserMemories(user_id: string) {
   try {
@@ -148,6 +150,14 @@ export async function getCommentsByMemoryId(memoryId: string) {
 
 export async function addComment(memoryId: string, userId: string, text: string) {
   try {
+    // Get memory data
+    const memoryData = await getMemoryData(memoryId);
+    if (!memoryData) {
+      throw new Error('Memory not found');
+      return;
+    }
+
+    // Insert comment
     const { data, error } = await supabase
       .from('memory_comment')
       .insert({ memory_id: memoryId, commenter_user_id: userId, text })
@@ -157,6 +167,29 @@ export async function addComment(memoryId: string, userId: string, text: string)
     if (error) {
       console.error('Error adding comment:', error);
       throw error;
+    }
+
+    // Notification section
+    if (memoryData.user_id != userId) {
+      const [commenterDetails, ownerDetails] = await getDetailsOfUsers([userId, memoryData.user_id]);
+
+      if (!commenterDetails) {
+        throw new Error('Commenter details not found');
+      }
+      if (!ownerDetails) {
+        throw new Error('Memory owner details not found');
+      }
+
+      // Add notification
+      const notification = {
+        owner_user_id: memoryData.user_id,
+        interactor_user_id: userId,
+        text: `${commenterDetails.first_name} ${commenterDetails.last_name} commented on your memory: "${text}"`,
+        url: `/memories/${memoryId}`,
+        isInteracted: 0
+      };
+
+      await createNotification(notification);
     }
 
     return data;

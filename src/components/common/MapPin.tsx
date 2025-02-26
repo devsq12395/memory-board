@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useParams } from 'react-router-dom';
 
 interface PinProps {
   map: google.maps.Map | null;
@@ -13,6 +14,7 @@ interface PinProps {
 
 const MapPin: React.FC<PinProps> = ({ map, position, mainImageUrl, smallImageUrl, pinSymbolUrl, memoryId, setSelectedMemoryId, setIsMemoryDetailsPopupOpen }) => {
   const [zoomLevel, setZoomLevel] = useState<number>(map?.getZoom() || 10);
+  const { username: pageUsername } = useParams<{ username: string }>();
 
   useEffect(() => {
     if (!map) return;
@@ -36,16 +38,11 @@ const MapPin: React.FC<PinProps> = ({ map, position, mainImageUrl, smallImageUrl
 
     let advancedMarker: any; // Temporarily using `any` for AdvancedMarkerElement
 
-    const createPinContent = (mainImageUrl: string, smallImageUrl: string, pinSymbolUrl: string) => {
+    const createPinContent = (mainImageUrl: string, pinSymbolUrl: string) => {
       const div = document.createElement('div');
       div.className = `relative ${zoomLevel > 12 ? 'w-16 h-16' : 'w-12 h-12'} mt-10 cursor-pointer`;
       
       createImageAndContainer(div, mainImageUrl);
-
-      const smallImage = document.createElement('img');
-      smallImage.src = smallImageUrl;
-      smallImage.className = 'w-[70px] h-[70px] absolute bottom-[-100px] left-[5px]';
-      div.appendChild(smallImage);
 
       const pinSymbol = document.createElement('img');
       pinSymbol.src = pinSymbolUrl;
@@ -113,13 +110,14 @@ const MapPin: React.FC<PinProps> = ({ map, position, mainImageUrl, smallImageUrl
       advancedMarker = new AdvancedMarkerElement({
         position,
         map,
-        content: createPinContent(mainImageUrl, smallImageUrl, pinSymbolUrl),
+        content: createPinContent(mainImageUrl, pinSymbolUrl),
       });
 
       advancedMarker.addListener('click', () => {
         console.log ('setting memory id to ', memoryId);
         setSelectedMemoryId(memoryId);
         setIsMemoryDetailsPopupOpen(true);
+        window.history.pushState({}, '', `/${pageUsername}/${memoryId}`);
       });
     };
 

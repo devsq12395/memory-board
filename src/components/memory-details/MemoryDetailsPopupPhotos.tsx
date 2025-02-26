@@ -117,7 +117,7 @@ const MemoryDetailsPopupPhotos: React.FC<MemoryDetailsPopupPhotosProps> = ({ mem
 
       {/* Upload System */}
       <button
-        className="bg-blue-500 text-white px-3 py-1 rounded-full cursor-pointer mt-4"
+        className="bg-gray-300 px-3 py-1 cursor-pointer mt-4 border-gray-600 border"
         onClick={handleUpload}
       >
         Upload Photos

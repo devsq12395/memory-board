@@ -1,7 +1,7 @@
 import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
 import React, { useState, useEffect } from "react";
 import MapPin from "./MapPin";
-import { getUserMemories, getLatestMemories } from "../../services/memoryService";
+import { getUserMemories, getLatestMemories, deleteMemory } from "../../services/memoryService";
 
 import { useUser } from "../contexts/UserContext";
 import { useToolbox } from "../contexts/ToolboxContext";
@@ -42,7 +42,17 @@ const MapComponent: React.FC<MapComponentProps> = ({ onMapClick, setSelectedMemo
 
     try {
       const userMemories = (pageUserID) ? await getUserMemories(pageUserID) : await getLatestMemories(50);
-      const sortedMemories = userMemories.sort((a, b) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime());
+      const validMemories = [];
+      for (const memory of userMemories) {
+        // Check if memory has a non-empty title or description (desc field)
+        if ((memory.title && memory.title.trim() !== '') || (memory.desc && memory.desc.trim() !== '')) {
+          validMemories.push(memory);
+        } else {
+          // Memory lacks a title and description so mark it for deletion
+          await deleteMemory(memory.id);
+        }
+      }
+      const sortedMemories = validMemories.sort((a, b) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime());
       setMemories(sortedMemories || []);
     } catch (err) {
       console.error("Failed to fetch user memories:", err);
