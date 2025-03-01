@@ -1,11 +1,14 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useUser } from '../contexts/UserContext';
 import supabase from '../../lib/supabase';
 import { getUserDetailsViaID, getUserIdHasProfile } from '../../services/profile';
 
+import { useUser } from '../contexts/UserContext';
+import { useSystem } from '../contexts/SystemContext';
+
 const GlobalScript: React.FC = ({ children }) => {
   const userContext = useUser();
+  const systemContext = useSystem();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,18 +33,34 @@ const GlobalScript: React.FC = ({ children }) => {
       }
     };
 
+    const updateMode = () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      let mode = 'desktop';
+
+      if (width <= 768) {
+        mode = height > width ? 'mobile-portrait' : 'mobile-landscape';
+      }
+
+      systemContext.setMode(mode);
+    };
+
     // Call immediately on component mount
     handleAuthChange();
+    updateMode();
 
     // Listen for auth state changes (login, logout, session refresh)
     const { data: authListener } = supabase.auth.onAuthStateChange(() => {
       handleAuthChange();
     });
 
+    window.addEventListener('resize', updateMode);
+
     return () => {
       authListener.subscription.unsubscribe(); // Cleanup listener on unmount
+      window.removeEventListener('resize', updateMode);
     };
-  }, [navigate, userContext]);
+  }, [navigate, userContext, systemContext]);
 
   return <>{children}</>;
 };
