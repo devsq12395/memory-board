@@ -114,7 +114,6 @@ const MapPin: React.FC<PinProps> = ({ map, position, mainImageUrl, smallImageUrl
       });
 
       advancedMarker.addListener('click', () => {
-        console.log ('setting memory id to ', memoryId);
         setSelectedMemoryId(memoryId);
         setIsMemoryDetailsPopupOpen(true);
         window.history.pushState({}, '', `/${pageUsername}/${memoryId}`);

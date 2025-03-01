@@ -34,8 +34,8 @@ const Footer = ({ pageUserID }: FooterProps) => {
   }, [pageUserID]);
 
   return (
-    <footer className="fixed bottom-0 md:absolute md:top-[85vh] h-[15vh] w-full min-w-[1200px] bg-blue-100 border-4 border-gray-100 rounded-lg shadow-lg">
-      <div className="absolute left-[5px] bottom-[83px] md:left-[75px] md:bottom-[50px]">
+    <footer className="fixed bottom-0 md:absolute top-[80vh] h-[20vh] md:top-[85vh] md:h-[15vh] w-full min-w-[1200px] bg-blue-100 border-4 border-gray-100 rounded-lg shadow-lg">
+      <div className="absolute left-[5px] bottom-[12vh] md:left-[75px] md:bottom-[50px]">
         <img src={userData.avatar_url} alt="Avatar" className="w-[100px] h-[100px] md:w-[200px] md:h-[200px] border-4 border-gray-100 md:rounded-full shadow-md object-cover" />
       </div>
       <div className="mx-[10px] my-[10px] md:mx-[300px] md:my-[15px] flex flex-col gap-2">

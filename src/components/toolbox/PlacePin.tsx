@@ -73,8 +73,12 @@ const PlacePin: React.FC<PlacePinProps> = ({ pinPosition }) => {
   return toolboxContext.isPlacingPin ? (
     <div>
       <img id="pin" src="https://res.cloudinary.com/dkloacrmg/image/upload/v1738857436/memory-board/ycqrh4wugzru3gywq2rp.png" alt="Pin" className="w-[50px] h-[50px] absolute pointer-events-none cursor-pointer" />
-      <div className="absolute bottom-[80%] left-1/2 transform -translate-x-1/2 bg-white p-2.5 border border-black">
-        Click to place a pin. Press ESC to cancel.
+      <div className="absolute bottom-[30%] md:bottom-[80%] left-1/2 transform -translate-x-1/2 bg-white p-2.5 border border-black">
+        <span className="hidden md:inline">Press ESC to cancel or press ESC to cancel.</span>
+        <div className="mt-2 md:hidden">Click to place a pin.</div>
+        <div className="mt-2 md:hidden">
+          <button onClick={() => toolboxContext.setIsPlacingPin(false)} className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded">Cancel</button>
+        </div>
       </div>
     </div>
   ) : null;

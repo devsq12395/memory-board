@@ -30,17 +30,8 @@ const Tooltip: React.FC<TooltipProps> = ({ content }) => {
     >
       {visible && (
         <div
-          style={{
-            position: 'fixed',
-            top: position.y + 10,
-            left: position.x + 10,
-            backgroundColor: 'black',
-            color: 'white',
-            padding: '5px',
-            borderRadius: '3px',
-            pointerEvents: 'none',
-            zIndex: 1000,
-          }}
+          style={{ top: position.y + 10, left: position.x + 10 }}
+          className="fixed bg-black text-white p-1 rounded pointer-events-none z-50"
         >
           {content}
         </div>
