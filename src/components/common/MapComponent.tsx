@@ -47,8 +47,8 @@ const MapComponent: React.FC<MapComponentProps> = ({ onMapClick, setSelectedMemo
         // Check if memory has a non-empty title or description (desc field)
         if ((memory.title && memory.title.trim() !== '') || (memory.desc && memory.desc.trim() !== '')) {
           validMemories.push(memory);
-        } else {
-          // Memory lacks a title and description so mark it for deletion
+        } else if (new Date().getTime() - new Date(memory.date_created).getTime() > 2 * 24 * 60 * 60 * 1000) {
+          // Memory lacks a title and description, so mark it for deletion if it's older than 2 days
           await deleteMemory(memory.id);
         }
       }

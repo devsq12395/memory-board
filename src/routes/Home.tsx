@@ -154,6 +154,7 @@ const Home = () => {
         <MemoryDetailsPopup 
           memoryId={selectedMemoryId || ''} 
           onClose={closeMemoryDetailsPopup} 
+          pageUserID={pageUserID || ''}
         />
       }
       {isLoginPopupOpen && <LoginPopup onClose={() => setIsLoginPopupOpen(!isLoginPopupOpen)} />}

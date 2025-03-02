@@ -3,18 +3,22 @@ import { getPhotosOfMemory, addPhoto } from '../../services/photosService';
 import Button from '../common/Button';
 
 import { usePopups } from '../contexts/PopupsContext';
+import { useUser } from '../contexts/UserContext';
+import { UserDetails } from '../../services/profile';
 
 interface MemoryDetailsPopupPhotosProps {
   memoryId: string;
+  pageUserDetails: UserDetails | null;
 }
 
-const MemoryDetailsPopupPhotos: React.FC<MemoryDetailsPopupPhotosProps> = ({ memoryId }) => {
+const MemoryDetailsPopupPhotos: React.FC<MemoryDetailsPopupPhotosProps> = ({ memoryId, pageUserDetails }) => {
   const [photos, setPhotos] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [uploadStatus, setUploadStatus] = useState<string | null>(null);
   const photosPerPage = 5;
 
   const popupsContext = usePopups();
+  const userContext = useUser();
 
   useEffect(() => {
     const fetchPhotos = async () => {
@@ -116,15 +120,17 @@ const MemoryDetailsPopupPhotos: React.FC<MemoryDetailsPopupPhotosProps> = ({ mem
       </div>
 
       {/* Upload System */}
-      <button
-        className="bg-gray-300 px-3 py-1 cursor-pointer mt-4 border-gray-600 border"
-        onClick={handleUpload}
-      >
-        Upload Photos
-      </button>
-      {uploadStatus && (
-        <p className={`mt-2 text-${uploadStatus === 'Uploading...' ? 'blue' : 'green'}-500`}>{uploadStatus}</p>
-      )}
+      { userContext.uid == pageUserDetails?.user_id  && <>
+        <button
+          className="bg-gray-300 px-3 py-1 cursor-pointer mt-4 border-gray-600 border"
+          onClick={handleUpload}
+        >
+          Upload Photos
+        </button>  
+        {uploadStatus && (
+          <p className={`mt-2 text-${uploadStatus === 'Uploading...' ? 'blue' : 'green'}-500`}>{uploadStatus}</p>
+        )}
+      </>}
     </div>
   );
 };

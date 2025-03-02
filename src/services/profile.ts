@@ -1,7 +1,7 @@
 import supabase from '../lib/supabase';
 import axios from 'axios';
 
-interface UserDetails {
+export interface UserDetails {
   user_id: string;
   first_name: string;
   last_name: string;

@@ -55,11 +55,7 @@ const TakePhotoPopup: React.FC = () => {
     >
       {toolboxContext.sharePhotoUrl ? (
         <div className="flex flex-col items-center">
-          <img
-            src={toolboxContext.sharePhotoUrl}
-            alt="Shared memory"
-            className="w-full h-auto mb-4"
-          />
+          {/* Share Buttons */}
           <div className="flex space-x-4">
             {/* Facebook Share Button */}
             <button
@@ -84,6 +80,13 @@ const TakePhotoPopup: React.FC = () => {
               Download Image
             </button>
           </div>
+
+          {/* Image Preview */}
+          <img
+            src={toolboxContext.sharePhotoUrl}
+            alt="Shared memory"
+            className="w-full h-auto mt-4"
+          />
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center h-full">

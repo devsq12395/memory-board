@@ -56,15 +56,18 @@ const Drawer: React.FC<DrawerProps> = ({ isOpen, toggleDrawer, toggleLoginPopup,
   }, [uid]);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleOutsideClick = (event: MouseEvent | TouchEvent) => {
       if (isOpen && drawerRef.current && !drawerRef.current.contains(event.target as Node)) {
         toggleDrawer();
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', handleOutsideClick);
+    document.addEventListener('touchstart', handleOutsideClick);
+
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('touchstart', handleOutsideClick);
     };
   }, [toggleDrawer, isOpen]);
 
