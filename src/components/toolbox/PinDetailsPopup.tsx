@@ -4,7 +4,8 @@ import { useToolbox } from '../contexts/ToolboxContext';
 import Button from '../common/Button';
 import Popup from '../common/Popup';
 
-interface PlacePinDetailsPopupProps {
+interface PinDetailsPopupProps {
+  mode: 'place' | 'edit';
   stickerData: { name: string; imageUrl: string };
   setIsChooseStickerPopupOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setIsTriggerDelayedRefresh: React.Dispatch<React.SetStateAction<boolean>>;
@@ -12,7 +13,7 @@ interface PlacePinDetailsPopupProps {
 
 const defaultThumbnailImg = 'https://res.cloudinary.com/dkloacrmg/image/upload/v1739507939/memory-board/pbmgfsmpejt3wulrdruy.png';
 
-const PlacePinDetailsPopup: React.FC<PlacePinDetailsPopupProps> = ({ stickerData, setIsChooseStickerPopupOpen, setIsTriggerDelayedRefresh }) => {
+const PinDetailsPopup: React.FC<PinDetailsPopupProps> = ({ mode, stickerData, setIsChooseStickerPopupOpen, setIsTriggerDelayedRefresh }) => {
   const toolboxContext = useToolbox();
 
   const [thumbnailImg, setThumbnailImg] = useState<string>(defaultThumbnailImg);
@@ -141,7 +142,7 @@ const PlacePinDetailsPopup: React.FC<PlacePinDetailsPopupProps> = ({ stickerData
     { !toolboxContext.addingNewMemoryId ? <Popup
       isShow={true}
       onClose={() => toolboxContext.setIsPlacingPinPopupOpen(false)}
-      titleText="Let's add details to this memory"
+      titleText={mode === 'place' ? "Let's add details to this memory" : "Edit memory details"}
     >
       <div className="flex flex-col items-center justify-center h-full">
         <div className="loader border-t-4 border-b-4 border-gray-300 rounded-full w-8 h-8 mb-4 animate-spin"></div>
@@ -150,7 +151,7 @@ const PlacePinDetailsPopup: React.FC<PlacePinDetailsPopupProps> = ({ stickerData
     </Popup> : <Popup
       isShow={true}
       onClose={() => toolboxContext.setIsPlacingPinPopupOpen(false)}
-      titleText="Let's add details to this memory"
+      titleText={mode === 'place' ? "Let's add details to this memory" : "Edit memory details"}
     >
       <div className="flex flex-col gap-4">
         {/* Text Form fields */}
@@ -200,4 +201,4 @@ const PlacePinDetailsPopup: React.FC<PlacePinDetailsPopupProps> = ({ stickerData
   </>;
 };
 
-export default PlacePinDetailsPopup;
+export default PinDetailsPopup;

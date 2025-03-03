@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react";
-import { useParams } from 'react-router-dom';
 
 interface PinProps {
   map: google.maps.Map | null;
   position: { lat: number; lng: number };
   mainImageUrl: string;
   smallImageUrl: string;
-  pinSymbolUrl: string;
   memoryId: string;
   setSelectedMemoryId: React.Dispatch<React.SetStateAction<string | null>>;
   setIsMemoryDetailsPopupOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  pageUsername: string;
 }
 
-const MapPin: React.FC<PinProps> = ({ map, position, mainImageUrl, smallImageUrl, pinSymbolUrl, memoryId, setSelectedMemoryId, setIsMemoryDetailsPopupOpen }) => {
+const pinSymbolUrl = 'https://maps.google.com/mapfiles/ms/icons/red-dot.png';
+
+const MapPin: React.FC<PinProps> = ({ map, position, mainImageUrl, smallImageUrl, memoryId, setSelectedMemoryId, setIsMemoryDetailsPopupOpen, pageUsername }) => {
   const [zoomLevel, setZoomLevel] = useState<number>(map?.getZoom() || 10);
-  const { username: pageUsername } = useParams<{ username: string }>();
 
   useEffect(() => {
     if (!map) return;
@@ -37,16 +37,17 @@ const MapPin: React.FC<PinProps> = ({ map, position, mainImageUrl, smallImageUrl
     if (!map) return;
 
     let advancedMarker: any; // Temporarily using `any` for AdvancedMarkerElement
+    let mainImageContainer: HTMLDivElement | null = null;
 
     const createPinContent = (mainImageUrl: string, pinSymbolUrl: string) => {
       const div = document.createElement('div');
       div.className = `relative ${zoomLevel > 12 ? 'w-16 h-16' : 'w-12 h-12'} mt-10 cursor-pointer`;
       
-      createImageAndContainer(div, mainImageUrl);
+      mainImageContainer = createImageAndContainer(div, mainImageUrl);
 
       const pinSymbol = document.createElement('img');
       pinSymbol.src = pinSymbolUrl;
-      pinSymbol.className = 'w-[50px] h-[50px] absolute bottom-[30px] left-[10px]';
+      pinSymbol.className = 'w-[50px] h-[50px] absolute';
       div.appendChild(pinSymbol);
 
       return div;
@@ -60,7 +61,6 @@ const MapPin: React.FC<PinProps> = ({ map, position, mainImageUrl, smallImageUrl
       mainImage.style.height = '100%';
 
       const mainImageContainer = document.createElement('div');
-      mainImageContainer.className = 'border-2 border-white bg-white p-1 shadow-md flex justify-center items-center';
 
       // Set default container size to prevent huge initial rendering
       mainImageContainer.style.width = '100px';
@@ -82,16 +82,22 @@ const MapPin: React.FC<PinProps> = ({ map, position, mainImageUrl, smallImageUrl
           containerAspectRatio = 4 / 3;
           containerWidth = maxSize;
           containerHeight = maxSize * (3 / 4); // e.g., 100 * 9/16
+
+          mainImageContainer.className = 'border-2 border-white bg-white p-1 shadow-md flex justify-center items-center absolute bottom-[30px] right-[-30px]';
         } else if (imgWidth < imgHeight) {
           // Portrait: force 9:16 ratio, height capped at 100
           containerAspectRatio = 3 / 4;
           containerHeight = maxSize;
           containerWidth = maxSize * (3 / 4); // e.g., 100 * 9/16
+
+          mainImageContainer.className = 'border-2 border-white bg-white p-1 shadow-md flex justify-center items-center absolute bottom-[30px] right-[-15px]';
         } else {
           // Square
           containerAspectRatio = 1;
           containerWidth = maxSize;
           containerHeight = maxSize;
+
+          mainImageContainer.className = 'border-2 border-white bg-white p-1 shadow-md flex justify-center items-center absolute bottom-[30px] right-[-30px]';
         }
 
         mainImageContainer.style.width = `${containerWidth}px`;
@@ -100,6 +106,7 @@ const MapPin: React.FC<PinProps> = ({ map, position, mainImageUrl, smallImageUrl
 
       mainImageContainer.appendChild(mainImage);
       parentDiv.appendChild(mainImageContainer);
+      return mainImageContainer;
     }
 
     const loadMarkerLibrary = async () => {
@@ -116,7 +123,6 @@ const MapPin: React.FC<PinProps> = ({ map, position, mainImageUrl, smallImageUrl
       advancedMarker.addListener('click', () => {
         setSelectedMemoryId(memoryId);
         setIsMemoryDetailsPopupOpen(true);
-        window.history.pushState({}, '', `/${pageUsername}/${memoryId}`);
       });
     };
 
@@ -125,6 +131,9 @@ const MapPin: React.FC<PinProps> = ({ map, position, mainImageUrl, smallImageUrl
     return () => {
       if (advancedMarker) {
         advancedMarker.map = null;
+      }
+      if (mainImageContainer && mainImageContainer.parentNode) {
+        mainImageContainer.parentNode.removeChild(mainImageContainer);
       }
     };
   }, [map, position]);

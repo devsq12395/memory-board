@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import supabase from '../../lib/supabase';
 import Button from '../common/Button';
 
 import { useUser } from '../contexts/UserContext';
 import { getUserDetailsViaID } from '../../services/profile';
+import { logout } from '../../services/authService';
 
 interface DrawerProps {
   isOpen: boolean;
@@ -15,6 +17,8 @@ interface DrawerProps {
 const Drawer: React.FC<DrawerProps> = ({ isOpen, toggleDrawer, toggleLoginPopup, toggleUserSettingsPopup }) => {
   const { isAuthenticated, setIsAuthenticated, setUid, uid } = useUser();
   const drawerRef = useRef<HTMLDivElement>(null);
+
+  const navigate = useNavigate();
 
   const [userData, setUserData] = useState({
     first_name: '',
@@ -80,9 +84,11 @@ const Drawer: React.FC<DrawerProps> = ({ isOpen, toggleDrawer, toggleLoginPopup,
         toggleLoginPopup();
         break;
       case 'Logout':
-        await supabase.auth.signOut();
+        await logout();
         setIsAuthenticated(false);
         setUid(null);
+        navigate('/');
+        window.location.reload();
         break;
       default:
         break;

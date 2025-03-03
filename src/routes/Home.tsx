@@ -10,7 +10,7 @@ import Drawer from '../components/drawer/Drawer';
 import DrawerButton from '../components/drawer/DrawerButton';
 
 import LoginPopup from '../components/auth/LoginPopup';
-import PlacePinDetailsPopup from '../components/toolbox/PlacePinDetailsPopup';
+import PinDetailsPopup from '../components/toolbox/PinDetailsPopup';
 import ChooseStickerPopup from '../components/toolbox/ChooseStickerPopup';
 import MemoryDetailsPopup from '../components/memory-details/MemoryDetailsPopup';
 import ImageViewer from '../components/common/ImageViewer';
@@ -20,6 +20,7 @@ import TakePhotoPopup from '../components/toolbox/TakePhotoPopup';
 import { useToolbox } from '../components/contexts/ToolboxContext';
 import { useUser } from '../components/contexts/UserContext';
 import { usePopups } from '../components/contexts/PopupsContext';
+import { useProfilePage } from '../components/contexts/ProfilePageContext';
 import { getUserDetails } from '../services/profile';
 
 import LoginButton from '../components/common/LoginButton';
@@ -30,6 +31,7 @@ const Home = () => {
   const toolboxContext = useToolbox();
   const popupsContext = usePopups();
   const userContext = useUser();
+  const profilePageContext = useProfilePage();
 
   const { username: pageUsername } = useParams<{ username: string }>();
   const { memoryId: pageMemoryId } = useParams<{ memoryId: string }>();
@@ -53,6 +55,27 @@ const Home = () => {
     setPinPosition({ lat, lng });
   };
 
+  // Set which user this page is about
+  useEffect(() => {
+    if (pageUsername) {
+      const fetchUserID = async () => {
+        const userDetails = await getUserDetails(pageUsername);
+        if (userDetails) {
+          setPageUserID(userDetails.user_id);
+          toolboxContext.setIsRefreshPins(true);
+
+          profilePageContext.setPageUsername(pageUsername);
+          profilePageContext.setPageUserID(userDetails.user_id);
+        } else {
+          setPageUserID(null);
+        }
+      };
+      fetchUserID();
+    } else {
+      toolboxContext.setIsRefreshPins(true);
+    }
+  }, [pageUsername]);
+
   // Delayed refresh of the pins
   useEffect(() => {
     if (isTriggerDelayedRefresh) {
@@ -67,21 +90,6 @@ const Home = () => {
   }, [isTriggerDelayedRefresh]);
 
   useEffect(() => {
-    if (pageUsername) {
-      const fetchUserID = async () => {
-        const userDetails = await getUserDetails(pageUsername);
-        if (userDetails) {
-          setPageUserID(userDetails.user_id);
-        } else {
-          setPageUserID(null);
-        }
-      };
-      fetchUserID();
-    }
-    toolboxContext.setIsRefreshPins(true);
-  }, [pageUsername]);
-
-  useEffect(() => {
     if (pageMemoryId) {
       setSelectedMemoryId(pageMemoryId);
       setIsMemoryDetailsPopupOpen(true);
@@ -91,7 +99,10 @@ const Home = () => {
   const closeMemoryDetailsPopup = () => {
     setIsMemoryDetailsPopupOpen(false);
     setSelectedMemoryId(null);
-    window.history.pushState({}, '', `/${pageUsername}`);
+
+    window.history.pushState({}, '', 
+      `${profilePageContext.pageUsername ? `/${profilePageContext.pageUsername}` : '/'}`
+    );
   };
 
   return (
@@ -139,7 +150,8 @@ const Home = () => {
       />
 
       {/* Popups */}
-      <PlacePinDetailsPopup 
+      <PinDetailsPopup 
+        mode='place'
         stickerData={chosenSticker}
         setIsChooseStickerPopupOpen={setIsChooseStickerPopupOpen}
         setIsTriggerDelayedRefresh={setIsTriggerDelayedRefresh}

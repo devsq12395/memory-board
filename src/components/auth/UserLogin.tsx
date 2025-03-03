@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { login } from '../../services/authService';
 import { useUser } from '../contexts/UserContext';
+import { getUserDetailsViaID } from '../../services/profile';
 
 interface UserLoginProps {
   disabled: boolean;
@@ -8,6 +10,8 @@ interface UserLoginProps {
 }
 
 const UserLogin: React.FC<UserLoginProps> = ({ disabled, onClose }) => {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -20,7 +24,12 @@ const UserLogin: React.FC<UserLoginProps> = ({ disabled, onClose }) => {
     if (data) {
       setIsAuthenticated(true);
       setUid(data.user?.id ?? null);
-      onClose?.();
+
+      const userData = await getUserDetailsViaID(data.user?.id ?? '');
+      if (userData && userData.user_name && userData.user_name.length > 0) {
+        navigate(`/${userData.user_name}`);
+        window.location.reload();
+      }
     }
     if (error) {
       console.error('Login failed:', error.message);

@@ -53,6 +53,11 @@ const MemoryDetailsPopup: React.FC<MemoryDetailsPopupProps> = ({ memoryId, onClo
 
       const userData = await getUserDetailsViaID(data.user_id);
       setUserDetails(userData);
+
+      // When memory is fully loaded, push new URL with memory ID
+      if (userData?.user_name) {
+        window.history.pushState({}, '', `/${userData.user_name}/${memoryId}`);
+      }
     };
 
     fetchMemoryData();

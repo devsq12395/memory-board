@@ -5,10 +5,12 @@ import { getUserDetailsViaID, getUserIdHasProfile } from '../../services/profile
 
 import { useUser } from '../contexts/UserContext';
 import { useSystem } from '../contexts/SystemContext';
+import { useProfilePage } from '../contexts/ProfilePageContext';
 
 const GlobalScript: React.FC = ({ children }) => {
   const userContext = useUser();
   const systemContext = useSystem();
+  const profilePageContext = useProfilePage();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,9 +25,6 @@ const GlobalScript: React.FC = ({ children }) => {
           userContext.setUid(user.id);
           
           const userData = await getUserDetailsViaID(user.id);
-          if (userData && userData.user_name && userData.user_name.length > 0) {
-            navigate(`/${userData.user_name}`);
-          }
         }
       } else {
         userContext.setIsAuthenticated(false);

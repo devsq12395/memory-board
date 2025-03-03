@@ -1,6 +1,7 @@
 import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
 import React, { useState, useEffect } from "react";
 import MapPin from "./MapPin";
+
 import { getUserMemories, getLatestMemories, deleteMemory } from "../../services/memoryService";
 
 import { useUser } from "../contexts/UserContext";
@@ -34,6 +35,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ onMapClick, setSelectedMemo
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [memories, setMemories] = useState<any[]>([]);
+  const [pinsVersion, setPinsVersion] = useState<number>(0);
 
   {/* Fetch memories function */}
   const fetchMemories = async () => {
@@ -53,7 +55,10 @@ const MapComponent: React.FC<MapComponentProps> = ({ onMapClick, setSelectedMemo
         }
       }
       const sortedMemories = validMemories.sort((a, b) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime());
+      console.log ('new memories:');
+      console.log (sortedMemories);
       setMemories(sortedMemories || []);
+      setPinsVersion(prev => prev + 1);
     } catch (err) {
       console.error("Failed to fetch user memories:", err);
       setError("Failed to load memories.");
@@ -112,7 +117,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ onMapClick, setSelectedMemo
             {/* Add map pins */}
             {memories.map((memory, index) => (
               <MapPin
-                key={index}
+                key={`${memory.id}-${pinsVersion}`}
                 map={map}
                 position={{ lat: memory.pos_lat, lng: memory.pos_lng }}
                 mainImageUrl={memory.thumbnail_url}
@@ -120,7 +125,6 @@ const MapComponent: React.FC<MapComponentProps> = ({ onMapClick, setSelectedMemo
                 setSelectedMemoryId={setSelectedMemoryId}
                 setIsMemoryDetailsPopupOpen={setIsMemoryDetailsPopupOpen}
                 memoryId={memory.id}
-                pinSymbolUrl="https://res.cloudinary.com/dkloacrmg/image/upload/v1738857436/memory-board/ycqrh4wugzru3gywq2rp.png"
               />
             ))}
           </>
