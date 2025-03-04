@@ -135,10 +135,12 @@ const UserSettingsPopup: React.FC<UserSettingsPopupProps> = ({ isShow, onClose }
       {/* Right Side - Avatar */}
       <div className="flex flex-col justify-between w-[100%] h-[100%]">
         <div className="flex flex-col w-full items-center">
-          <h2 className="text-lg font-bold mb-4">Avatar</h2>
-          <Button type="button" text="Choose File" styleType="file" onClick={handleAvatarUploadClick} />
+          <h2 className="mb-2 text-2xl font-bold w-full text-left">Avatar</h2>
+          <hr className="mb-4 border-t border-gray-300 w-full" />
+
           <input type="file" id="avatar" name="avatar" accept="image/*" onChange={handleImageUpload} className="hidden" />
-          <img src={userData.avatar_url} alt="Avatar Preview" onClick={handleAvatarImageClick} className="mt-2 h-35 w-35 object-cover mx-auto border border-gray-300 rounded-md cursor-pointer" />
+          <img src={userData.avatar_url} alt="Avatar Preview" onClick={handleAvatarImageClick} className="mb-6 h-60 w-60 object-cover mx-auto border border-gray-300 rounded-md cursor-pointer" />
+          <Button type="button" text="Choose File" styleType="file" onClick={handleAvatarUploadClick} />
           {uploadStatus && <p className={`mt-2 text-sm ${uploadStatus === 'Upload complete!' ? 'text-green-500' : 'text-red-500'}`}>{uploadStatus}</p>}
           {saveStatus && <p className={`mt-2 text-sm ${saveStatus === 'User settings saved' ? 'text-green-500' : 'text-red-500'}`}>{saveStatus}</p>}
         </div>

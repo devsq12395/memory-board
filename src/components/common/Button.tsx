@@ -27,7 +27,7 @@ const Button: React.FC<ButtonProps> = ({ type, text, onClick, disabled, classNam
       break;
     case 'drawer-content':
       styleClasses = 'bg-blue-100 text-blue-700 hover:bg-blue-200 border-b border-gray-200';
-      styleText = 'text-left';
+      styleText = 'text-left w-full';
       break;
     case 'main-ui':
       styleClasses = 'bg-gray-100 text-gray-700 hover:bg-gray-200 border-b border-gray-200';

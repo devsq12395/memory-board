@@ -55,8 +55,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ onMapClick, setSelectedMemo
         }
       }
       const sortedMemories = validMemories.sort((a, b) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime());
-      console.log ('new memories:');
-      console.log (sortedMemories);
+      
       setMemories(sortedMemories || []);
       setPinsVersion(prev => prev + 1);
     } catch (err) {
@@ -110,6 +109,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ onMapClick, setSelectedMemo
           fullscreenControl: false,
           streetViewControl: false, // Disable street view control
           mapTypeControl: false, // Disable map type (satellite view) control
+          disableDefaultUI: true
         }}
       >
         {map && (

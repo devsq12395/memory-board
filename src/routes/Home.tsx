@@ -8,6 +8,7 @@ import PlacePin from "../components/toolbox/PlacePin";
 import Footer from "../components/footer/Footer";
 import Drawer from '../components/drawer/Drawer';
 import DrawerButton from '../components/drawer/DrawerButton';
+import MapLogo from '../components/common/MapLogo';
 
 import LoginPopup from '../components/auth/LoginPopup';
 import PinDetailsPopup from '../components/toolbox/PinDetailsPopup';
@@ -140,6 +141,7 @@ const Home = () => {
         setIsMemoryDetailsPopupOpen={setIsMemoryDetailsPopupOpen}
       />
       <PlacePin pinPosition={pinPosition} />
+      <MapLogo />
 
       {/* Toolbox Components */}
       <button onClick={() => setIsLoginPopupOpen(!isLoginPopupOpen)}>Open Login Popup</button>

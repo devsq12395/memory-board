@@ -34,13 +34,13 @@ const Footer = ({ pageUserID }: FooterProps) => {
   }, [pageUserID]);
 
   return (
-    <footer className="fixed bottom-0 md:absolute top-[80vh] h-[20vh] md:top-[85vh] md:h-[15vh] w-full min-w-[1200px] bg-blue-100 border-4 border-gray-100 rounded-lg shadow-lg">
-      <div className="absolute left-[5px] bottom-[12vh] md:left-[75px] md:bottom-[50px]">
+    <footer className="fixed bottom-0 md:absolute h-[150px] md:bottom-[0vh] md:h-[15vh] w-full min-w-[1200px] bg-blue-100 border-4 border-gray-100 rounded-lg shadow-lg">
+      <div className="absolute left-[5px] bottom-[150px] md:left-[75px] md:bottom-[50px]">
         <img src={userData.avatar_url} alt="Avatar" className="w-[100px] h-[100px] md:w-[200px] md:h-[200px] border-4 border-gray-100 md:rounded-full shadow-md object-cover" />
       </div>
       <div className="mx-[10px] my-[10px] md:mx-[300px] md:my-[15px] flex flex-col gap-2">
         <h1 className="text-m md:text-3xl font-bold">
-          {pageUserID ? `${userData.first_name} ${userData.last_name}` : 'Welcome to MemoryBoard.com!'}
+          {pageUserID ? `${userData.first_name} ${userData.last_name}` : 'Welcome to MemoWorld.com!'}
         </h1>
         <hr className="text-m md:text-m w-full border-t border-gray-300" />
         <p className="text-sm md:text-m">

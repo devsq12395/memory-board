@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import supabase from '../../lib/supabase';
 import Button from '../common/Button';
 
+import { LOGO_LINK, DEFAULT_AVATAR } from '../../constants/constants';
+
 import { useUser } from '../contexts/UserContext';
 import { getUserDetailsViaID } from '../../services/profile';
 import { logout } from '../../services/authService';
@@ -23,8 +25,9 @@ const Drawer: React.FC<DrawerProps> = ({ isOpen, toggleDrawer, toggleLoginPopup,
   const [userData, setUserData] = useState({
     first_name: '',
     last_name: '',
+    user_name: '',
     bio: '',
-    avatar_url: 'https://res.cloudinary.com/dkloacrmg/image/upload/v1717925908/cld-sample-3.jpg',
+    avatar_url: DEFAULT_AVATAR,
     email: ''
   });
 
@@ -34,8 +37,9 @@ const Drawer: React.FC<DrawerProps> = ({ isOpen, toggleDrawer, toggleLoginPopup,
         setUserData({
           first_name: '',
           last_name: '',
+          user_name: '',
           bio: '',
-          avatar_url: 'https://res.cloudinary.com/dkloacrmg/image/upload/v1717925908/cld-sample-3.jpg',
+          avatar_url: DEFAULT_AVATAR,
           email: ''
         });
         return;
@@ -49,8 +53,9 @@ const Drawer: React.FC<DrawerProps> = ({ isOpen, toggleDrawer, toggleLoginPopup,
         setUserData({
           first_name: userDetails.first_name,
           last_name: userDetails.last_name,
+          user_name: userDetails.user_name,
           bio: userDetails.bio || '',
-          avatar_url: userDetails.avatar_url || 'https://res.cloudinary.com/dkloacrmg/image/upload/v1717925908/cld-sample-3.jpg',
+          avatar_url: userDetails.avatar_url || DEFAULT_AVATAR,
           email: email
         });
       }
@@ -77,6 +82,14 @@ const Drawer: React.FC<DrawerProps> = ({ isOpen, toggleDrawer, toggleLoginPopup,
 
   const handleButtonClick = async (btn: string) => {
     switch (btn) {
+      case 'Profile':
+        navigate(`/${userData.user_name}`);
+        window.location.reload();
+        break;
+      case 'Home':
+        navigate('/');
+        window.location.reload();
+        break;
       case 'Profile Settings':
         toggleUserSettingsPopup();
         break;
@@ -100,48 +113,64 @@ const Drawer: React.FC<DrawerProps> = ({ isOpen, toggleDrawer, toggleLoginPopup,
       type="button"
       text={text}
       onClick={async () => await handleButtonClick(action)}
-      className="w-full"
+      className="w-full text-left"
       styleType="drawer-content"
     />
   );
 
   return (
-    <div ref={drawerRef} className={`fixed top-0 right-0 w-64 h-full bg-white shadow-lg z-50 transition-transform duration-300 ${isOpen ? 'transform-none' : 'translate-x-full'}`}>
+    <div ref={drawerRef} className={`fixed top-0 right-0 w-64 md:w-96 h-full bg-white shadow-lg z-50 transition-transform duration-300 ${isOpen ? 'transform-none' : 'translate-x-full'}`}>
       <div className="flex flex-col justify-between h-full">
         {/* Top Part */}
         <div>
-          {/* User Info */}
-          <div className="flex items-center p-4">
-            <img src={userData.avatar_url} alt="User Profile" className="h-10 w-10 rounded-full mr-3" />
+          {userData.user_name === '' ? <>
+            {/* Header Logo if not logged in */}
             <div>
-              <p className="font-medium">{userData.first_name} {userData.last_name}</p>
-              <p className="text-sm text-gray-500">{userData.email}</p>
+              <div className="flex justify-center mt-4 cursor-pointer px-4" onClick={() => handleButtonClick('Home')}>
+                <img src={LOGO_LINK} alt="Logo" className="w-full h-auto" />
+              </div>
+              <p className="text-center text-sm text-gray-500 mt-2 pb-6">Created by SQ Software, 2025</p>
+              <hr className="border-gray-300" />
             </div>
-          </div>
-          <hr className="border-gray-300" />
+          </> : <>
+            {/* User Info if logged in */}
+            <div className="flex items-center p-4 cursor-pointer" onClick={() => handleButtonClick('Profile')}>
+              <img src={userData.avatar_url} alt="User Profile" className="h-10 w-10 rounded-full mr-3" />
+              <div>
+                <p className="font-medium">{userData.first_name} {userData.last_name}</p>
+                <p className="text-sm text-gray-500">{userData.email}</p>
+              </div>
+            </div>
+            <hr className="border-gray-300" />
+          </>} 
 
           {/* Contents */}
           {isAuthenticated ? (
             <div>
               {/* Buttons when logged in */}
+              {renderButton('Home', 'Home')}
               {renderButton('Profile Settings', 'Profile Settings')}
               {renderButton('Logout', 'Logout')}
             </div>
           ) : (
             <div>
               {/* Buttons when not logged in */}
+              {renderButton('Home', 'Home')}
               {renderButton('Login / Signup', 'Login')}
             </div>
           )}
         </div>
 
-        {/* Logo */}
-        <div>
-          <hr className="border-gray-300" />
-          <div className="flex justify-center mt-4">
-            <img src="/logo.png" alt="Logo" className="w-full h-auto" />
+        {/* Footer Logo if logged in */}
+        {userData.user_name !== '' && (
+          <div>
+            <hr className="border-gray-300" />
+            <div className="flex justify-center mt-4 cursor-pointer px-4" onClick={() => handleButtonClick('Home')}>
+              <img src={LOGO_LINK} alt="Logo" className="w-full h-auto" />
+            </div>
+            <p className="text-center text-sm text-gray-500 mt-2 pb-6">Created by SQ Software, 2025</p>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

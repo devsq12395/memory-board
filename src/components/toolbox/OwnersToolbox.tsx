@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronUpIcon, ChevronDownIcon, MapPinIcon, CameraIcon } from '@heroicons/react/24/solid';
 import html2canvas from 'html2canvas';
 import { uploadToCloudinary } from '../../services/cloudinaryService';
+import { LOGO_LINK } from '../../constants/constants';
 
 const OwnersToolbox: React.FC = () => {
   const toolboxRef = useRef<HTMLDivElement | null>(null);
@@ -47,8 +48,40 @@ const OwnersToolbox: React.FC = () => {
       return;
     }
 
+    if (getComputedStyle(mapElement).position === 'static') {
+      mapElement.style.position = 'relative';
+    }
+
     toolboxContext.setSharePhotoUrl(null);
     toolboxContext.setSharePhotoPopupIsOpen(true);
+
+    // Create container for logo and text
+    const logoContainer = document.createElement('div');
+    logoContainer.style.position = 'absolute';
+    logoContainer.style.bottom = '5vh';
+    logoContainer.style.right = '1vw';
+    logoContainer.style.width = '25vw';
+    logoContainer.style.zIndex = '1000';
+
+    // Create "Powered by" text element
+    const poweredText = document.createElement('div');
+    poweredText.textContent = 'Powered by';
+    poweredText.style.textAlign = 'center';
+    poweredText.style.fontSize = '1.5vw';
+    poweredText.style.color = '#000';
+
+    // Create logo image element
+    const logoImg = document.createElement('img');
+    logoImg.src = LOGO_LINK;
+    logoImg.style.width = '100%';
+    logoImg.style.height = 'auto';
+
+    // Append text and logo image to container, with text above logo
+    logoContainer.appendChild(poweredText);
+    logoContainer.appendChild(logoImg);
+
+    // Append the container to the map element
+    mapElement.appendChild(logoContainer);
 
     try {
       try {
@@ -63,13 +96,16 @@ const OwnersToolbox: React.FC = () => {
             const imageUrl = await uploadToCloudinary(new File([blob], randomFilename, { type: 'image/png' }));
 
             toolboxContext.setSharePhotoUrl(imageUrl || null);
+            logoContainer.remove();
           }
         });
       } catch (error) {
         console.error('Error capturing the map:', error);
+        if (logoContainer && logoContainer.parentNode) { logoContainer.remove(); }
       }
     } catch (error) {
       console.error('Error capturing or uploading image:', error);
+      if (logoContainer && logoContainer.parentNode) { logoContainer.remove(); }
     }
   };
 
