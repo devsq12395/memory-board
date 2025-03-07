@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
+import { addUserMemory } from '../../services/memoryService';
+
 import { useToolbox } from '../contexts/ToolboxContext';
 import { useUser } from '../contexts/UserContext';
-import { addUserMemory } from '../../services/memoryService';
+import { usePopups } from '../contexts/PopupsContext';
 
 interface PlacePinProps {
   pinPosition: { lat: number; lng: number } | null;
@@ -10,6 +12,7 @@ interface PlacePinProps {
 const PlacePin: React.FC<PlacePinProps> = ({ pinPosition }) => {
   const toolboxContext = useToolbox();
   const userContext = useUser();
+  const popupsContext = usePopups();
 
   {/* UseEffect: Move the pin image with the mouse if isPlacingPin is true */}
   useEffect(() => {
@@ -61,8 +64,8 @@ const PlacePin: React.FC<PlacePinProps> = ({ pinPosition }) => {
     if (userContext.uid && pinPosition) {
       try {
         const newMemory = await addUserMemory(userContext.uid, pinPosition.lat, pinPosition.lng);
+        popupsContext.setEditMemoryPopupMode('place');
         toolboxContext.setAddingNewMemoryId(newMemory.id);
-        toolboxContext.setIsPlacingPinPopupOpen(true);
         toolboxContext.setIsRefreshPins(true);
       } catch (error) {
         console.error('Failed to add new memory:', error);

@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { getCommentsByMemoryId, addComment } from '../../services/memoryService';
 import Button from '../common/Button';
 
+import MemoryDetailsPopupCommentsEntry from './MemoryDetailsPopupCommentsEntry';
+import { Comment } from '../types/types';
+
 import { getUserDetailsViaID } from '../../services/profile';
 import { useUser } from '../contexts/UserContext';
 
@@ -10,7 +13,7 @@ interface MemoryDetailsPopupCommentsProps {
 }
 
 const MemoryDetailsPopupComments: React.FC<MemoryDetailsPopupCommentsProps> = ({ memoryId }) => {
-  const [comments, setComments] = useState<any[]>([]);
+  const [comments, setComments] = useState<Comment[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [newComment, setNewComment] = useState('');
   const [submitCommentStatus, setSubmitCommentStatus] = useState('');
@@ -27,12 +30,14 @@ const MemoryDetailsPopupComments: React.FC<MemoryDetailsPopupCommentsProps> = ({
     const commentsWithUserDetails = await Promise.all(
       commentsData.map(async (comment) => {
         const userDetails = await getUserDetailsViaID(comment.commenter_user_id);
+        const userDetailsIDFix = { ...userDetails, id: comment.id };
         return {
           ...comment,
-          ...userDetails
+          ...userDetailsIDFix
         };
       })
     );
+    console.log (commentsWithUserDetails);
     setComments(commentsWithUserDetails);
   };
 
@@ -95,22 +100,11 @@ const MemoryDetailsPopupComments: React.FC<MemoryDetailsPopupCommentsProps> = ({
       {/* Comments List */}
       <div className="w-full">
         {comments.map((comment, index) => (
-          <div key={index} className="flex flex-col gap-4 items-start space-x-3 bg-gray-100 p-3 rounded-md shadow-sm border border-gray-300">
-            <div className="flex flex-row space-x-2 items-center w-full">
-              <div className="flex flex-row justify-between px-2 pb-2 w-full">
-                <div className="flex flex-row items-center gap-3">
-                  <img
-                    src={comment.avatar_url}
-                    alt="Profile"
-                    className="w-10 h-10 rounded-full"
-                  />
-                  <p><strong>{comment.first_name} {comment.last_name}</strong></p>
-                </div>
-                <p className="text-sm text-gray-500">Commented on: {new Date(comment.created_at).toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}</p>
-              </div>
-            </div>
-            <p>{comment.text}</p>
-          </div>
+          <MemoryDetailsPopupCommentsEntry
+            key={index}
+            comment={comment}
+            index={index}
+          />
         ))}
       </div>
 

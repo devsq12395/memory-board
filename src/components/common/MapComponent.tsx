@@ -6,6 +6,7 @@ import { getUserMemories, getLatestMemories, deleteMemory } from "../../services
 
 import { useUser } from "../contexts/UserContext";
 import { useToolbox } from "../contexts/ToolboxContext";
+import { useProfilePage } from "../contexts/ProfilePageContext";
 
 interface MapComponentProps {
   onMapClick: (lat: number, lng: number) => void;
@@ -31,6 +32,7 @@ const mapId = import.meta.env.VITE_GOOGLE_MAP_ID as string;
 const MapComponent: React.FC<MapComponentProps> = ({ onMapClick, setSelectedMemoryId, setIsMemoryDetailsPopupOpen, pageUserID }) => {
   const userContext = useUser();
   const toolboxContext = useToolbox();
+  const profilePageContext = useProfilePage();
   
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -43,6 +45,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ onMapClick, setSelectedMemo
     setError(null);
 
     try {
+      // Get all memories
       const userMemories = (pageUserID) ? await getUserMemories(pageUserID) : await getLatestMemories(50);
       const validMemories = [];
       for (const memory of userMemories) {
@@ -58,6 +61,9 @@ const MapComponent: React.FC<MapComponentProps> = ({ onMapClick, setSelectedMemo
       
       setMemories(sortedMemories || []);
       setPinsVersion(prev => prev + 1);
+
+      // Set count of memories
+      profilePageContext.setNumOfMemories(sortedMemories.length - 1);
     } catch (err) {
       console.error("Failed to fetch user memories:", err);
       setError("Failed to load memories.");

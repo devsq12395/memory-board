@@ -46,7 +46,7 @@ const Popup: React.FC<PopupProps> = ({children, isShow, titleText, onClose}) => 
     </> : <>
       { /* Mobile View */ }
         <div className={`fixed inset-0 bg-black/50 flex items-center justify-center z-50`}>
-          <div className="p-4 bg-white shadow-md rounded-md w-full h-[95%] max-h-[95%]">
+          <div className="p-4 bg-white shadow-md rounded-md w-full h-[100%] max-h-[100%]">
             {/* Header */}
             <div className="flex flex-row justify-between items-center">
               {/* Title Part */}

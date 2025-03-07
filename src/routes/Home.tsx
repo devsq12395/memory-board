@@ -11,12 +11,14 @@ import DrawerButton from '../components/drawer/DrawerButton';
 import MapLogo from '../components/common/MapLogo';
 
 import LoginPopup from '../components/auth/LoginPopup';
-import PinDetailsPopup from '../components/toolbox/PinDetailsPopup';
+import EditPinDetailsPopup from '../components/toolbox/EditPinDetailsPopup';
 import ChooseStickerPopup from '../components/toolbox/ChooseStickerPopup';
 import MemoryDetailsPopup from '../components/memory-details/MemoryDetailsPopup';
 import ImageViewer from '../components/common/ImageViewer';
 import UserSettingsPopup from '../components/settings/UserSettingsPopup';
 import TakePhotoPopup from '../components/toolbox/TakePhotoPopup';
+import DeleteMemoryPopup from '../components/memory-details/DeleteMemoryPopup';
+import BuyMemoryLimitPopup from '../components/shop/BuyMemoryLimitPopup';
 
 import { useToolbox } from '../components/contexts/ToolboxContext';
 import { useUser } from '../components/contexts/UserContext';
@@ -56,8 +58,23 @@ const Home = () => {
     setPinPosition({ lat, lng });
   };
 
-  // Set which user this page is about
+  // Starting checks
   useEffect(() => {
+    // Check if memoryId is present in the URL on page start
+    if (pageMemoryId) {
+      popupsContext.setIsMemoryDetailsPopupOpenOnPageStart(true);
+    }
+  }, []);
+
+  // Set which user this page is about
+  // Called when there is a pageUsername parameter on the URL or when isRefreshUserDetails is marked as true
+  useEffect(() => {
+    if (profilePageContext.isRefreshUserDetails) {
+      profilePageContext.setIsRefreshUserDetails(false);
+    } else {
+      return;
+    }
+
     if (pageUsername) {
       const fetchUserID = async () => {
         const userDetails = await getUserDetails(pageUsername);
@@ -67,6 +84,8 @@ const Home = () => {
 
           profilePageContext.setPageUsername(pageUsername);
           profilePageContext.setPageUserID(userDetails.user_id);
+
+          profilePageContext.setNumOfMemoriesLimit(userDetails.memory_limit);
         } else {
           setPageUserID(null);
         }
@@ -75,7 +94,7 @@ const Home = () => {
     } else {
       toolboxContext.setIsRefreshPins(true);
     }
-  }, [pageUsername]);
+  }, [pageUsername, profilePageContext.isRefreshUserDetails]);
 
   // Delayed refresh of the pins
   useEffect(() => {
@@ -83,7 +102,6 @@ const Home = () => {
       const timeoutId = setTimeout(() => {
         toolboxContext.setIsRefreshPins(true);
         setIsTriggerDelayedRefresh(false);
-        console.log ('refreshing');
       }, 200);
 
       return () => clearTimeout(timeoutId);
@@ -101,9 +119,15 @@ const Home = () => {
     setIsMemoryDetailsPopupOpen(false);
     setSelectedMemoryId(null);
 
-    window.history.pushState({}, '', 
-      `${profilePageContext.pageUsername ? `/${profilePageContext.pageUsername}` : '/'}`
-    );
+    if (popupsContext.isMemoryDetailsPopupOpenOnPageStart) {
+      window.location.href = 
+        `${profilePageContext.pageUsername ? `/${profilePageContext.pageUsername}` : '/'}`;
+    } else {
+      window.history.pushState({}, '', 
+        `${profilePageContext.pageUsername ? `/${profilePageContext.pageUsername}` : '/'}`);
+    } 
+
+    //window.location.reload();
   };
 
   return (
@@ -152,8 +176,8 @@ const Home = () => {
       />
 
       {/* Popups */}
-      <PinDetailsPopup 
-        mode='place'
+      <EditPinDetailsPopup 
+        mode={popupsContext.editMemoryPopupMode}
         stickerData={chosenSticker}
         setIsChooseStickerPopupOpen={setIsChooseStickerPopupOpen}
         setIsTriggerDelayedRefresh={setIsTriggerDelayedRefresh}
@@ -177,8 +201,10 @@ const Home = () => {
         isShow={isUserSettingsPopupOpen}
         onClose={() => setIsUserSettingsPopupOpen(!isUserSettingsPopupOpen)} 
       />
+      <DeleteMemoryPopup />
 
       <TakePhotoPopup />
+      <BuyMemoryLimitPopup />
     </div>
   );
 };

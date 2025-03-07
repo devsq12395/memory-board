@@ -3,7 +3,6 @@ import React, { createContext, useState, useContext } from 'react';
 interface ToolboxContextType {
   isPlacingPin: boolean;
   isRefreshPins: boolean;
-  isPlacingPinPopupOpen: boolean;
   addingNewMemoryId: string | null;
 
   sharePhotoUrl: string | null;
@@ -11,7 +10,6 @@ interface ToolboxContextType {
 
   setIsPlacingPin: (value: boolean) => void;
   setIsRefreshPins: (value: boolean) => void;
-  setIsPlacingPinPopupOpen: (value: boolean) => void;
   setAddingNewMemoryId: (value: string | null) => void;
 
   setSharePhotoUrl: (value: string | null) => void;
@@ -23,7 +21,6 @@ const ToolboxContext = createContext<ToolboxContextType | undefined>(undefined);
 export const ToolboxProvider: React.FC = ({ children }) => {
   const [isPlacingPin, setIsPlacingPin] = useState(false);
   const [isRefreshPins, setIsRefreshPins] = useState(false);
-  const [isPlacingPinPopupOpen, setIsPlacingPinPopupOpen] = useState(false);
   const [addingNewMemoryId, setAddingNewMemoryId] = useState<string | null>(null);
   const [sharePhotoUrl, setSharePhotoUrl] = useState<string | null>(null);
   const [sharePhotoPopupIsOpen, setSharePhotoPopupIsOpen] = useState<boolean>(false);
@@ -32,7 +29,6 @@ export const ToolboxProvider: React.FC = ({ children }) => {
     <ToolboxContext.Provider value={{ 
       isPlacingPin, setIsPlacingPin, 
       isRefreshPins, setIsRefreshPins, 
-      isPlacingPinPopupOpen, setIsPlacingPinPopupOpen,
       addingNewMemoryId, setAddingNewMemoryId,
       sharePhotoUrl, setSharePhotoUrl,
       sharePhotoPopupIsOpen, setSharePhotoPopupIsOpen

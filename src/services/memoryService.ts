@@ -2,6 +2,8 @@ import supabase from '../lib/supabase';
 import { createNotification } from './notificationService';
 import { getDetailsOfUsers } from './profile';
 
+import { Comment } from '../components/types/types';
+
 export async function getUserMemories(user_id: string) {
   try {
     const { data, error } = await supabase
@@ -129,20 +131,17 @@ export async function getLatestMemories(limit: number) {
   }
 }
 
-export async function getCommentsByMemoryId(memoryId: string) {
+export async function getCommentsByMemoryId(memoryId: string): Promise<Comment[]> {
   try {
     const { data, error } = await supabase
-      .from('memory_comment')
-      .select('*')
-      .eq('memory_id', memoryId)
-      .order('created_at', { ascending: false });
+      .rpc('get_comments_by_memory_id', { memory_id: memoryId });
 
     if (error) {
       console.error('Error fetching comments for memory:', error);
       throw error;
     }
 
-    return data || [];
+    return data;
   } catch (error) {
     console.error('Unexpected error fetching comments for memory:', error);
     throw error;
@@ -155,7 +154,6 @@ export async function addComment(memoryId: string, userId: string, text: string)
     const memoryData = await getMemoryData(memoryId);
     if (!memoryData) {
       throw new Error('Memory not found');
-      return;
     }
 
     // Insert comment
@@ -196,6 +194,25 @@ export async function addComment(memoryId: string, userId: string, text: string)
     return data;
   } catch (error) {
     console.error('Unexpected error adding comment:', error);
+    throw error;
+  }
+}
+
+export async function deleteComment(commentId: string) {
+  try {
+    const { error } = await supabase
+      .from('memory_comment')
+      .update({ is_deleted: true })
+      .eq('id', commentId);
+
+    if (error) {
+      console.error('Error deleting comment:', error);
+      throw error;
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('Unexpected error deleting comment:', error);
     throw error;
   }
 }

@@ -1,22 +1,27 @@
-import React, { useState } from 'react';
-import { updateMemoryDetails, deleteMemory } from '../../services/memoryService';
+import React, { useEffect, useState } from 'react';
+import { updateMemoryDetails, deleteMemory, getMemoryData } from '../../services/memoryService';
+
 import { useToolbox } from '../contexts/ToolboxContext';
+import { usePopups } from '../contexts/PopupsContext';
+
 import Button from '../common/Button';
 import Popup from '../common/Popup';
+import { DEFAULT_MEMORY_THUMBNAIL } from '../../constants/constants';
 
-interface PinDetailsPopupProps {
-  mode: 'place' | 'edit';
+export type PopupMode = 'place' | 'edit' | 'hidden';
+
+interface EditPinDetailsPopupProps {
+  mode: PopupMode;
   stickerData: { name: string; imageUrl: string };
   setIsChooseStickerPopupOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setIsTriggerDelayedRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const defaultThumbnailImg = 'https://res.cloudinary.com/dkloacrmg/image/upload/v1739507939/memory-board/pbmgfsmpejt3wulrdruy.png';
-
-const PinDetailsPopup: React.FC<PinDetailsPopupProps> = ({ mode, stickerData, setIsChooseStickerPopupOpen, setIsTriggerDelayedRefresh }) => {
+const EditPinDetailsPopup: React.FC<EditPinDetailsPopupProps> = ({ mode, stickerData, setIsChooseStickerPopupOpen, setIsTriggerDelayedRefresh }) => {
   const toolboxContext = useToolbox();
+  const popupsContext = usePopups();
 
-  const [thumbnailImg, setThumbnailImg] = useState<string>(defaultThumbnailImg);
+  const [thumbnailImg, setThumbnailImg] = useState<string>(DEFAULT_MEMORY_THUMBNAIL);
   const [formData, setFormData] = useState({
     title: '',
     date: new Date('2025-01-01').toISOString().split('T')[0],
@@ -26,13 +31,36 @@ const PinDetailsPopup: React.FC<PinDetailsPopupProps> = ({ mode, stickerData, se
   });
   const [uploading, setUploading] = useState(false);
   const [uploadMessage, setUploadMessage] = useState('');
-  const [thumbnailStyle, setThumbnailStyle] = useState<{ width: string; height: string; maxHeight: string }>({ width: '200px', height: '200px', maxHeight: '500px' });
+
+  useEffect(() => {
+    if (toolboxContext.addingNewMemoryId) {
+      setMemoryData(toolboxContext.addingNewMemoryId);
+    }
+  }, [toolboxContext.addingNewMemoryId]);
+
+  const setMemoryData = async (memoryId: string) => {
+    try {
+      const memoryData = await getMemoryData(memoryId);
+      if (!memoryData) {
+        throw new Error('Memory not found');
+      }
+
+      setFormData({
+        title: memoryData.title,
+        date: memoryData.date,
+        description: memoryData.desc,
+        sticker: '',
+        stickerName: ''
+      });
+      setThumbnailImg(memoryData.thumbnail_url || DEFAULT_MEMORY_THUMBNAIL);
+    } catch (error) {
+      console.error('Error fetching memory data:', error);
+    }
+  };
 
   const handleSubmit = async () => {
     try {
       const { title, date, description } = formData;
-      console.log (formData);
-      console.log (toolboxContext.addingNewMemoryId);
 
       await updateMemoryDetails(
         toolboxContext.addingNewMemoryId || '',
@@ -50,11 +78,15 @@ const PinDetailsPopup: React.FC<PinDetailsPopupProps> = ({ mode, stickerData, se
         sticker: '',
         stickerName: ''
       });
-      setThumbnailImg(defaultThumbnailImg);
+      setThumbnailImg(DEFAULT_MEMORY_THUMBNAIL);
 
       toolboxContext.setAddingNewMemoryId(null);
-      toolboxContext.setIsPlacingPinPopupOpen(false);
+      popupsContext.setEditMemoryPopupMode('hidden');
       setIsTriggerDelayedRefresh(true);
+
+      if (mode === 'edit') {
+        popupsContext.setRefreshMemoryDetailsPopup(true);
+      }
     } catch (error) {
       console.error('Error updating memory:', error);
     }
@@ -108,41 +140,19 @@ const PinDetailsPopup: React.FC<PinDetailsPopupProps> = ({ mode, stickerData, se
       await deleteMemory(toolboxContext.addingNewMemoryId);
     }
     toolboxContext.setAddingNewMemoryId(null);
-    toolboxContext.setIsPlacingPinPopupOpen(false);
+    popupsContext.setEditMemoryPopupMode('hidden');
     
     setIsTriggerDelayedRefresh(true);
     console.log('Cancel button clicked');
   };
 
-  const handleThumbnailLoad = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    const img = e.currentTarget;
-    const parentWidth = img.parentElement?.clientWidth || 200; // get parent's width
-    const naturalWidth = img.naturalWidth;
-    const naturalHeight = img.naturalHeight;
-    let newHeight: number;
-
-    if (naturalWidth > naturalHeight) {
-      // Landscape: 4:3 ratio: height = parentWidth * (3/4)
-      newHeight = parentWidth * (3 / 4);
-    } else if (naturalWidth < naturalHeight) {
-      // Portrait: 3:4 ratio: height = parentWidth * (4/3)
-      newHeight = parentWidth * (4 / 3);
-    } else {
-      // Square: height equals parent's width
-      newHeight = parentWidth;
-    }
-
-    // Set width to 100% to fill parent, and height dynamically
-    setThumbnailStyle({ width: '100%', height: `${newHeight}px`, maxHeight: `500px` });
-  };
-
-  if (!toolboxContext.isPlacingPinPopupOpen) return null;
+  if (mode === 'hidden') return null;
 
   return <>
     { !toolboxContext.addingNewMemoryId ? <Popup
       isShow={true}
-      onClose={() => toolboxContext.setIsPlacingPinPopupOpen(false)}
-      titleText={mode === 'place' ? "Let's add details to this memory" : "Edit memory details"}
+      onClose={() => popupsContext.setEditMemoryPopupMode('hidden')}
+      titleText="Loading Memory Details"
     >
       <div className="flex flex-col items-center justify-center h-full">
         <div className="loader border-t-4 border-b-4 border-gray-300 rounded-full w-8 h-8 mb-4 animate-spin"></div>
@@ -150,7 +160,7 @@ const PinDetailsPopup: React.FC<PinDetailsPopupProps> = ({ mode, stickerData, se
       </div>
     </Popup> : <Popup
       isShow={true}
-      onClose={() => toolboxContext.setIsPlacingPinPopupOpen(false)}
+      onClose={() => popupsContext.setEditMemoryPopupMode('hidden')}
       titleText={mode === 'place' ? "Let's add details to this memory" : "Edit memory details"}
     >
       <div className="flex flex-col gap-4">
@@ -174,15 +184,15 @@ const PinDetailsPopup: React.FC<PinDetailsPopupProps> = ({ mode, stickerData, se
           {/* Thumbnail Image */}
           <div className="form-group">
             <label htmlFor="thumbnail" className="block text-sm font-medium text-gray-700">Thumbnail Image</label>
-            <Button type="button" text="Choose File" styleType="file" onClick={() => document.getElementById('thumbnail')?.click()} />
             <input type="file" id="thumbnail" name="thumbnail" accept="image/*" onChange={handleInputChange} className="hidden" />
             <img 
-              src={thumbnailImg || 'https://res.cloudinary.com/dkloacrmg/image/upload/v1717925908/cld-sample-3.jpg'} 
+              src={thumbnailImg || DEFAULT_MEMORY_THUMBNAIL} 
               alt="Thumbnail Preview" 
-              onLoad={handleThumbnailLoad}
-              style={thumbnailStyle}
-              className="mt-2 object-cover mx-auto border border-gray-300 rounded-md" 
+              className="mt-2 border border-gray-300 rounded-md max-w-[200px] max-h-auto object-cover mx-auto" 
             />
+            <div className="flex justify-center w-full mt-2">
+              <Button type="button" text="Choose File" styleType="file" onClick={() => document.getElementById('thumbnail')?.click()} />
+            </div>
             <p className="text-center text-sm text-gray-500 mt-2">{uploadMessage}</p>
           </div>
 
@@ -201,4 +211,4 @@ const PinDetailsPopup: React.FC<PinDetailsPopupProps> = ({ mode, stickerData, se
   </>;
 };
 
-export default PinDetailsPopup;
+export default EditPinDetailsPopup;

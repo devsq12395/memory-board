@@ -1,16 +1,23 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { useToolbox } from '../contexts/ToolboxContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronUpIcon, ChevronDownIcon, MapPinIcon, CameraIcon } from '@heroicons/react/24/solid';
 import html2canvas from 'html2canvas';
 import { uploadToCloudinary } from '../../services/cloudinaryService';
+
+import { useToolbox } from '../contexts/ToolboxContext';
+import { useProfilePage } from '../contexts/ProfilePageContext';
+import { usePopups } from '../contexts/PopupsContext';
 import { LOGO_LINK } from '../../constants/constants';
 
 const OwnersToolbox: React.FC = () => {
-  const toolboxRef = useRef<HTMLDivElement | null>(null);
   const toolboxContext = useToolbox();
+  const profilePageContext = useProfilePage();
+  const popupsContext = usePopups();
+
+  const toolboxRef = useRef<HTMLDivElement | null>(null);
   const [isExpanded, setIsExpanded] = useState(true);
   const [tooltip, setTooltip] = useState({ visible: false, content: '', position: { x: 0, y: 0 } });
+
 
   const handleDragStart = (e: React.MouseEvent) => {
     const element = toolboxRef.current;
@@ -37,7 +44,11 @@ const OwnersToolbox: React.FC = () => {
   };
 
   const handlePlacePinClick = () => {
-    toolboxContext.setIsPlacingPin(true);
+    if (profilePageContext.numOfMemories < profilePageContext.numOfMemoriesLimit) {
+      toolboxContext.setIsPlacingPin(true);
+    } else {
+      popupsContext.setIsBuyMemoryPopupOpen(true);
+    }
   };
 
   const handleCaptureAndShare = async () => {
@@ -159,7 +170,7 @@ const OwnersToolbox: React.FC = () => {
                 onClick={handlePlacePinClick}
                 className="flex items-center justify-center w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition cursor-pointer"
               >
-                <MapPinIcon className="w-5 h-5 mr-2" /> Place Pin
+                <MapPinIcon className="w-5 h-5 mr-2" /> Place Pin ({profilePageContext.numOfMemories} / {profilePageContext.numOfMemoriesLimit})
               </button>
             </div>
 

@@ -8,6 +8,7 @@ export interface UserDetails {
   user_name: string;
   bio?: string;
   avatar_url?: string;
+  memory_limit: number;
 }
 
 export async function getUserIdHasProfile(userId: string): Promise<boolean> {
@@ -69,7 +70,7 @@ export async function getUserDetails(user_name: string): Promise<UserDetails | n
   try {
     const { data, error } = await supabase
       .from('profile')
-      .select('user_id, first_name, last_name, bio, avatar_url, user_name')
+      .select('user_id, first_name, last_name, bio, avatar_url, user_name, memory_limit')
       .eq('user_name', user_name)
       .single();
 

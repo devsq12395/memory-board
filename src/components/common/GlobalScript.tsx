@@ -6,11 +6,13 @@ import { getUserDetailsViaID, getUserIdHasProfile } from '../../services/profile
 import { useUser } from '../contexts/UserContext';
 import { useSystem } from '../contexts/SystemContext';
 import { useProfilePage } from '../contexts/ProfilePageContext';
+import { usePopups } from '../contexts/PopupsContext';
 
 const GlobalScript: React.FC = ({ children }) => {
   const userContext = useUser();
   const systemContext = useSystem();
   const profilePageContext = useProfilePage();
+  const popupsContext = usePopups();
   const navigate = useNavigate();
 
   useEffect(() => {

@@ -8,6 +8,8 @@ import Button from '../common/Button';
 
 import { useSystem } from '../contexts/SystemContext';
 import { useUser } from '../contexts/UserContext';
+import { usePopups } from '../contexts/PopupsContext';
+import { useToolbox } from '../contexts/ToolboxContext';
 import { getUserDetailsViaID, UserDetails } from '../../services/profile';
 
 import LoadingCircle from '../common/LoadingCircle';
@@ -21,6 +23,8 @@ interface MemoryDetailsPopupProps {
 const MemoryDetailsPopup: React.FC<MemoryDetailsPopupProps> = ({ memoryId, onClose, pageUserID }) => {
   const systemContext = useSystem();
   const userContext = useUser();
+  const popupsContext = usePopups();
+  const toolboxContext = useToolbox();
 
   const [memoryData, setMemoryData] = useState<any>(null);
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
@@ -46,28 +50,44 @@ const MemoryDetailsPopup: React.FC<MemoryDetailsPopupProps> = ({ memoryId, onClo
     setThumbnailStyle({ width: '100%', height: `${newHeight}px` });
   };
 
+  // Fetch memory data
   useEffect(() => {
-    const fetchMemoryData = async () => {
-      const data = await getMemoryData(memoryId);
-      setMemoryData(data);
-
-      const userData = await getUserDetailsViaID(data.user_id);
-      setUserDetails(userData);
-
-      // When memory is fully loaded, push new URL with memory ID
-      if (userData?.user_name) {
-        window.history.pushState({}, '', `/${userData.user_name}/${memoryId}`);
-      }
-    };
-
     fetchMemoryData();
-  }, [memoryId]);
+  }, [memoryId, popupsContext.refreshMemoryDetailsPopup]);
+
+  const fetchMemoryData = async () => {
+    const data = await getMemoryData(memoryId);
+    setMemoryData(data);
+
+    const userData = await getUserDetailsViaID(data.user_id);
+    setUserDetails(userData);
+
+    // When memory is fully loaded, push new URL with memory ID
+    if (userData?.user_name) {
+      window.history.pushState({}, '', `/${userData.user_name}/${memoryId}`);
+    }
+  };
+
+  const onButtonClick = (buttonType: string) => {
+    switch (buttonType) {
+      case 'edit':
+        popupsContext.setEditMemoryPopupMode('edit');
+        toolboxContext.setAddingNewMemoryId(memoryId);
+        break;
+      case 'delete':
+        popupsContext.setIsDeleteMemoryPopupOpen(true);
+        popupsContext.setCurMemoryId(memoryId);
+        break;
+      default:
+        break;
+    }
+  };
 
   return <>
     { systemContext.mode === 'desktop' ? 
       <>
         {/* Desktop View */}
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-30">
           <div className="bg-blue-200/75 p-6 rounded-md shadow-md w-3/4 h-3/4 flex relative border border-gray-300">
             {/* Close Button */}
             <button onClick={onClose} className="absolute top-2 right-2 bg-gray-300 rounded-full p-1">
@@ -88,8 +108,9 @@ const MemoryDetailsPopup: React.FC<MemoryDetailsPopupProps> = ({ memoryId, onClo
                     className="object-cover max-w-120 max-h-120" 
                   />
                 </div>
-                <div className="mt-[20px] flex justify-around">
-                  <Button type="button" text="Edit Memory" styleType="primary" />
+                <div className="mt-[20px] flex justify-center gap-4 w-full">
+                  <Button type="button" text="Edit Memory" styleType="primary" onClick={() => onButtonClick('edit')} />
+                  <Button type="button" text="Delete Memory" className="bg-red-400" styleType="primary" onClick={() => onButtonClick('delete')} />
                 </div>
               </div>
 
