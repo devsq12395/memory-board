@@ -37,7 +37,9 @@ const ShopCartPopup: React.FC = () => {
 
   const checkout = async () => {
     try {
-      await handleCheckout();
+      localStorage.setItem('currentRoute', window.location.pathname);
+      
+      await handleCheckout(cartItems);
       closePopup();
     } catch (error) {
       console.error('Error checking out:', error);

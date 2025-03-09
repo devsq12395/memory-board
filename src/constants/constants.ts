@@ -7,6 +7,7 @@
 export const LOGO_LINK = "https://res.cloudinary.com/dkloacrmg/image/upload/v1741081881/memory-board/mick6upqvowdadx5p0qq.png";
 export const DEFAULT_AVATAR = "https://res.cloudinary.com/dkloacrmg/image/upload/v1717925908/cld-sample-3.jpg";
 export const DEFAULT_MEMORY_THUMBNAIL = "https://res.cloudinary.com/dkloacrmg/image/upload/v1739507939/memory-board/pbmgfsmpejt3wulrdruy.png";
+export const DEFAULT_PIN_IMAGE = "https://maps.google.com/mapfiles/ms/icons/red-dot.png";
 
 // Shop Items
 export const SHOP_ITEM_IDS = [

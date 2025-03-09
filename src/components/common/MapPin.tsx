@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import { DEFAULT_PIN_IMAGE } from "../../constants/constants";
+
 interface PinProps {
   map: google.maps.Map | null;
   position: { lat: number; lng: number };
@@ -10,8 +12,6 @@ interface PinProps {
   setIsMemoryDetailsPopupOpen: React.Dispatch<React.SetStateAction<boolean>>;
   pageUsername: string;
 }
-
-const pinSymbolUrl = 'https://maps.google.com/mapfiles/ms/icons/red-dot.png';
 
 const MapPin: React.FC<PinProps> = ({ map, position, mainImageUrl, smallImageUrl, memoryId, setSelectedMemoryId, setIsMemoryDetailsPopupOpen, pageUsername }) => {
   const [zoomLevel, setZoomLevel] = useState<number>(map?.getZoom() || 10);
@@ -39,14 +39,14 @@ const MapPin: React.FC<PinProps> = ({ map, position, mainImageUrl, smallImageUrl
     let advancedMarker: any; // Temporarily using `any` for AdvancedMarkerElement
     let mainImageContainer: HTMLDivElement | null = null;
 
-    const createPinContent = (mainImageUrl: string, pinSymbolUrl: string) => {
+    const createPinContent = (mainImageUrl: string, DEFAULT_PIN_IMAGE: string) => {
       const div = document.createElement('div');
       div.className = `relative ${zoomLevel > 12 ? 'w-16 h-16' : 'w-12 h-12'} mt-10 cursor-pointer`;
       
       mainImageContainer = createImageAndContainer(div, mainImageUrl);
 
       const pinSymbol = document.createElement('img');
-      pinSymbol.src = pinSymbolUrl;
+      pinSymbol.src = DEFAULT_PIN_IMAGE;
       pinSymbol.className = 'w-[50px] h-[50px] absolute';
       div.appendChild(pinSymbol);
 
@@ -117,7 +117,7 @@ const MapPin: React.FC<PinProps> = ({ map, position, mainImageUrl, smallImageUrl
       advancedMarker = new AdvancedMarkerElement({
         position,
         map,
-        content: createPinContent(mainImageUrl, pinSymbolUrl),
+        content: createPinContent(mainImageUrl, DEFAULT_PIN_IMAGE),
       });
 
       advancedMarker.addListener('click', () => {

@@ -1,6 +1,7 @@
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import supabase from "../lib/supabase";
+import Button from '../components/common/Button';
 
 import { processCartItems } from "../services/shopService";
 
@@ -8,17 +9,26 @@ const TransactionResult = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [status, setStatus] = useState<"success" | "error" | "loading">("loading");
+  const startedProcessing = useRef(false);
 
   useEffect(() => {
     startHandlingItemsProcessing();
-  }, [searchParams]);
+  }, []);
 
   const loadUserData = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     return user?.id || null;
   };
 
+  const returnToMainPage = () => {
+    navigate(localStorage.getItem('currentRoute') || '/');
+    window.location.reload();
+  };
+
   const startHandlingItemsProcessing = async () => {
+    if (startedProcessing.current) return;
+    startedProcessing.current = true;
+
     try {
       const sessionId = searchParams.get("session_id");
       
@@ -66,12 +76,12 @@ const TransactionResult = () => {
             <h2 className="text-2xl font-semibold text-green-600">Payment Successful! 🎉</h2>
             <p className="text-gray-500 mt-2">Thank you for your purchase.</p>
             <div className="mt-4">
-              <button
-                onClick={() => navigate("/dashboard")}
+              <Button
+                type="button"
+                text="Back"
+                onClick={returnToMainPage}
                 className="bg-blue-600 text-white px-4 py-2 rounded-md shadow hover:bg-blue-700 transition"
-              >
-                Go to Dashboard
-              </button>
+              />
             </div>
           </div>
         )}
@@ -81,18 +91,18 @@ const TransactionResult = () => {
             <h2 className="text-2xl font-semibold text-red-600">Payment Failed! ❌</h2>
             <p className="text-gray-500 mt-2">There was an issue with your transaction.</p>
             <div className="mt-4 space-x-2">
-              <button
-                onClick={() => {}} // TO DO - Add Try Again
+              <Button
+                type="button"
+                text="Try Again"
+                onClick={() => {}}
                 className="bg-gray-600 text-white px-4 py-2 rounded-md shadow hover:bg-gray-700 transition"
-              >
-                Try Again
-              </button>
-              <button
+              />
+              <Button
+                type="button"
+                text="Contact Support"
                 onClick={() => navigate("/support")}
                 className="bg-red-600 text-white px-4 py-2 rounded-md shadow hover:bg-red-700 transition"
-              >
-                Contact Support
-              </button>
+              />
             </div>
           </div>
         )}

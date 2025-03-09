@@ -81,8 +81,6 @@ export const processCartItems = async (userId: string) => {
 
     for (const item of cartItems) {
       try {
-        console.log(`Processing item: ${item.name} x${item.quantity}`);
-
         switch (item.shop_item_id) {
           // First item - Add Memory Limit
           case SHOP_ITEM_IDS[0]:
@@ -114,13 +112,26 @@ export const processCartItems = async (userId: string) => {
   }
 };
 
-export const handleCheckout = async () => {
+export const handleCheckout = async (cartItems: CartItem[]) => {
   try {
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
+    const priceTotal = JSON.stringify(cartItems.reduce((total, item) => total + item.price, 0));
+    const cartItemsBody = JSON.stringify({
+      productName: "Total Price",
+      amount: priceTotal,
+    });
+
+    console.log (cartItemsBody);
+
+    if (!cartItemsBody) {
+      throw new Error("Cart items error");
+    }
+
     const response = await fetch(`${API_BASE_URL}/create-checkout-session`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount: 10, productName: "Sample Product" }),
+      body: cartItemsBody,
     });
 
     // Log response to check for issues
