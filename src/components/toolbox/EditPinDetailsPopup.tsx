@@ -114,7 +114,6 @@ const EditPinDetailsPopup: React.FC<EditPinDetailsPopupProps> = ({ mode, sticker
     const { name, value, files } = e.target as HTMLInputElement;
 
     if (files && files[0]) {
-      console.log('uploading image');
       setUploading(true);
       setUploadMessage('Uploading Image...');
       try {
@@ -143,7 +142,6 @@ const EditPinDetailsPopup: React.FC<EditPinDetailsPopupProps> = ({ mode, sticker
     popupsContext.setEditMemoryPopupMode('hidden');
     
     setIsTriggerDelayedRefresh(true);
-    console.log('Cancel button clicked');
   };
 
   if (mode === 'hidden') return null;

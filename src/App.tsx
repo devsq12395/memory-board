@@ -5,6 +5,7 @@ import GlobalScript from './components/common/GlobalScript';
 
 import Home from './routes/Home';
 import UserSignupDetailsPage from './routes/UserSignupDetailsPage';
+import TransactionResult from './routes/TransactionResult';
 
 import './App.css'
 
@@ -19,6 +20,7 @@ function App() {
             <Route path="/:username" element={<Home />} />
             <Route path="/:username/:memoryId" element={<Home />} />
             <Route path="/signup-details" element={<UserSignupDetailsPage />} />
+            <Route path="/transaction-result" element={<TransactionResult />} />
           </Routes>
         </GlobalScript>
       </ContextProviders>

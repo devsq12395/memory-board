@@ -209,3 +209,35 @@ export async function updateUserDetail(userId: string, updates: UserUpdate): Pro
     throw error;
   }
 }
+
+export async function updateMemoryLimit(userId: string, addMemoryLimit: number): Promise<any> {
+  try {
+    // Fetch current memory limit
+    const { data: currentData, error: fetchError } = await supabase
+      .from('profile')
+      .select('memory_limit')
+      .eq('user_id', userId)
+      .single();
+
+    if (fetchError) {
+      throw fetchError;
+    }
+
+    const currentLimit = currentData.memory_limit || 0;
+    const newLimit = currentLimit + addMemoryLimit;
+
+    const { data, error } = await supabase
+      .from('profile')
+      .update({ memory_limit: newLimit })
+      .eq('user_id', userId);
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error updating memory limit:", error);
+    throw error;
+  }
+}

@@ -29,6 +29,7 @@ import { getUserDetails } from '../services/profile';
 import LoginButton from '../components/common/LoginButton';
 import NotificationButton from '../components/common/notification/NotificationButton';
 import NotificationPanel from '../components/common/notification/NotificationPanel';
+import ShopCartPopup from '../components/shop/ShopCartPopup';
 
 const Home = () => {
   const toolboxContext = useToolbox();
@@ -205,6 +206,7 @@ const Home = () => {
 
       <TakePhotoPopup />
       <BuyMemoryLimitPopup />
+      <ShopCartPopup />
     </div>
   );
 };

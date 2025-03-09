@@ -1,22 +1,21 @@
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import supabase from '../../lib/supabase';
-import { getUserDetailsViaID, getUserIdHasProfile } from '../../services/profile';
+import { getUserIdHasProfile } from '../../services/profile';
 
 import { useUser } from '../contexts/UserContext';
 import { useSystem } from '../contexts/SystemContext';
-import { useProfilePage } from '../contexts/ProfilePageContext';
-import { usePopups } from '../contexts/PopupsContext';
 
 const GlobalScript: React.FC = ({ children }) => {
   const userContext = useUser();
   const systemContext = useSystem();
-  const profilePageContext = useProfilePage();
-  const popupsContext = usePopups();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const handleAuthChange = async () => {
+      if (location.pathname === '/transaction-result') return;
+
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         const hasProfile = await getUserIdHasProfile(user.id);
@@ -25,8 +24,6 @@ const GlobalScript: React.FC = ({ children }) => {
         } else {
           userContext.setIsAuthenticated(true);
           userContext.setUid(user.id);
-          
-          const userData = await getUserDetailsViaID(user.id);
         }
       } else {
         userContext.setIsAuthenticated(false);
@@ -43,7 +40,7 @@ const GlobalScript: React.FC = ({ children }) => {
         mode = height > width ? 'mobile-portrait' : 'mobile-landscape';
       }
 
-      systemContext.setMode(mode);
+      systemContext.setMode(mode as 'desktop' | 'mobile-portrait' | 'mobile-landscape');
     };
 
     // Call immediately on component mount

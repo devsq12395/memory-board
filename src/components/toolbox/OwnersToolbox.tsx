@@ -6,18 +6,17 @@ import { uploadToCloudinary } from '../../services/cloudinaryService';
 
 import { useToolbox } from '../contexts/ToolboxContext';
 import { useProfilePage } from '../contexts/ProfilePageContext';
-import { usePopups } from '../contexts/PopupsContext';
+import { useShop } from '../contexts/ShopContext';
 import { LOGO_LINK } from '../../constants/constants';
 
 const OwnersToolbox: React.FC = () => {
   const toolboxContext = useToolbox();
   const profilePageContext = useProfilePage();
-  const popupsContext = usePopups();
+  const shopContext = useShop();
 
   const toolboxRef = useRef<HTMLDivElement | null>(null);
   const [isExpanded, setIsExpanded] = useState(true);
   const [tooltip, setTooltip] = useState({ visible: false, content: '', position: { x: 0, y: 0 } });
-
 
   const handleDragStart = (e: React.MouseEvent) => {
     const element = toolboxRef.current;
@@ -47,7 +46,7 @@ const OwnersToolbox: React.FC = () => {
     if (profilePageContext.numOfMemories < profilePageContext.numOfMemoriesLimit) {
       toolboxContext.setIsPlacingPin(true);
     } else {
-      popupsContext.setIsBuyMemoryPopupOpen(true);
+      shopContext.setIsBuyMemoryPopupOpen(true);
     }
   };
 

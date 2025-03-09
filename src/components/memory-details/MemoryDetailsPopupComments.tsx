@@ -37,7 +37,6 @@ const MemoryDetailsPopupComments: React.FC<MemoryDetailsPopupCommentsProps> = ({
         };
       })
     );
-    console.log (commentsWithUserDetails);
     setComments(commentsWithUserDetails);
   };
 

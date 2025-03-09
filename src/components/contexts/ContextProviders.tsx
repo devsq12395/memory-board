@@ -5,6 +5,8 @@ import { APIProvider } from '@vis.gl/react-google-maps';
 import { PopupsProvider } from './PopupsContext';
 import { SystemProvider } from './SystemContext';
 import { ProfilePageProvider } from './ProfilePageContext';
+import { ShopProvider } from './ShopContext';
+import Shop from '../../routes/Shop';
 
 interface ContextProvidersProps {
   children: React.ReactNode;
@@ -16,11 +18,13 @@ const ContextProviders: React.FC<ContextProvidersProps> = ({ children }) => {
       <UserProvider>
         <ProfilePageProvider>
           <PopupsProvider>
-            <ToolboxProvider>
-              <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAP_ID as string}>
-                {children}
-              </APIProvider>
-            </ToolboxProvider>
+            <ShopProvider>
+              <ToolboxProvider>
+                <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAP_ID as string}>
+                  {children}
+                </APIProvider>
+              </ToolboxProvider>
+            </ShopProvider>
           </PopupsProvider>
         </ProfilePageProvider>
       </UserProvider>
